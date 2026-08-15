@@ -3,7 +3,7 @@ const { Schema, model } = mongoose;
 
 const trip = new Schema(
   {
-    tripId: String,
+    organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
     name: String,
     location: String,
     description: String,

@@ -3,12 +3,10 @@ const { Schema, model } = mongoose;
 
 const sosAlert = new Schema(
   {
-    sosId: String,
+    batchId: { type: Schema.Types.ObjectId, ref: 'Batch', required: true },
+    triggeredByUserId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     emergencyType: String,
-    triggeredAt: Date,
-    status: String,
-    incidentDescription: String,
-    actionTaken: String
+    status: { type: String, enum: ['Open', 'Resolved'], default: 'Open' }
   },
   {
     timestamps: true
