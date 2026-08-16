@@ -4,6 +4,9 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import organizationRoutes from './routes/organizationRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import tripRoutes from './routes/tripRoutes.js';
+import batchRoutes from './routes/batchRoutes.js';
+import staffRoutes from './routes/staffRoutes.js';
 
 const app = express();
 
@@ -18,6 +21,9 @@ app.get('/api/test', (req, res) => {
 
 app.use('/api/organizations', organizationRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/trips', tripRoutes);
+app.use('/api/batches', batchRoutes);
+app.use('/api/staff', staffRoutes);
 
 // Global error handler - always last
 app.use((err, req, res, next) => {

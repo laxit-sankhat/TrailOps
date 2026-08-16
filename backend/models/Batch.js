@@ -12,3 +12,6 @@ const batch = new Schema(
         
     }
 );
+
+const Batch = model('Batch', batch);
+export default Batch;
