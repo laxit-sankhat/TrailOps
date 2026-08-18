@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-export const verifyToken = (req, res, next) => {
+export const verifyAccessToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -9,7 +9,7 @@ export const verifyToken = (req, res, next) => {
     const token = authHeader.split(' ')[1];
 
     try{
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         req.user = decoded;
         next();
     }
@@ -17,6 +17,30 @@ export const verifyToken = (req, res, next) => {
         return res.status(401).json({ success: false, message: 'Invalid or expired token' });
     }
 }
+
+export const verifyRefreshToken = (req, res, next) => {
+    const token = req.cookies?.refreshToken;
+
+    if (!token) {
+        return res.status(401).json({
+            success: false,
+            message: 'No refresh token provided'
+        });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+        req.refreshUser = decoded;
+        next();
+    } catch (err) {
+        return res.status(401).json({
+            success: false,
+            message: 'Invalid or expired refresh token'
+        });
+    }
+};
+
+export const verifyToken = verifyAccessToken;
 
 export const restrictTo = (...allowedRoles) => {
     return (req, res, next) => {

@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import organizationRoutes from './routes/organizationRoutes.js';
@@ -14,6 +15,8 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+//Added by Urv
+app.use(cookieParser());
 
 app.get('/api/test', (req, res) => {
   res.json({ success: true, message: 'TrailOps backend is running' });
