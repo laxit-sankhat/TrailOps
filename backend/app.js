@@ -9,6 +9,7 @@ import tripRoutes from './routes/tripRoutes.js';
 import batchRoutes from './routes/batchRoutes.js';
 import staffRoutes from './routes/staffRoutes.js';
 import participantRoutes from './routes/participantRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use('/api/trips', tripRoutes);
 app.use('/api/batches', batchRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/participants', participantRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 // Global error handler - always last
 app.use((err, req, res, next) => {
