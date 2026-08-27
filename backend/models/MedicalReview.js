@@ -6,11 +6,11 @@ const medicalReviewSchema = new Schema(
         bookingId: { type: Schema.Types.ObjectId, ref: 'Booking', required: true },
         medicalProfileId: { type: Schema.Types.ObjectId, ref: 'MedicalProfile', required: true },
         organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
-        medicalReviewerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        medicalReviewerId: { type: Schema.Types.ObjectId, ref: 'User' },
         status: {
             type: String,
-            enum: ['Approved', 'Rejected', 'NeedsMoreInfo'],
-            default: 'NeedsMoreInfo'
+            enum: ['Pending', 'Approved', 'Rejected', 'NeedsMoreInfo'],
+            default: 'Pending'
         },
         notes: { type: String },
     }, 

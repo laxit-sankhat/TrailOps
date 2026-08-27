@@ -1,6 +1,8 @@
 import Booking from '../models/Booking.js';
 import Batch from '../models/Batch.js';
 import Trip from '../models/Trip.js';
+import MedicalReview from '../models/MedicalReview.js';
+import MedicalProfile from '../models/MedicalProfile.js';
 
 const ACTIVE_STATUSES = ['Inquiry', 'PendingMedicalReview', 'MedicallyApproved', 'Confirmed'];
 
@@ -72,6 +74,46 @@ export const cancelBooking = async (req, res) => {
     }
 
     res.status(200).json({ success: true, booking });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const submitForMedicalReview = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    if (booking.participantId.toString() !== req.user.userId) {
+      return res.status(403).json({ success: false, message: 'This is not your booking' });
+    }
+
+    if (booking.status !== 'Inquiry') {
+      return res.status(400).json({ success: false, message: 'This booking is not awaiting medical submission' });
+    }
+
+    const medicalProfile = await MedicalProfile.findOne({ participantId: req.user.userId }).sort({ uploadedAt: -1 });
+
+    if (!medicalProfile) {
+      return res.status(400).json({ success: false, message: 'You must upload a medical profile before submitting' });
+    }
+
+    const review = await MedicalReview.create({
+      bookingId: booking._id,
+      medicalProfileId: medicalProfile._id,
+      organizationId: booking.organizationId,
+      medicalReviewerId: null, // not yet assigned - filled in when a Medical Officer picks it up
+      status: 'Pending'
+    });
+
+    booking.status = 'PendingMedicalReview';
+    await booking.save();
+
+    res.status(200).json({ success: true, booking, review });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: err.message });
