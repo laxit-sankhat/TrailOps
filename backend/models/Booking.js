@@ -12,7 +12,7 @@ const booking = new Schema(
             enum: [
                 'Inquiry',
                 'PendingMedicalReview',
-                'MedicalApproved',
+                'MedicallyApproved',
                 'Confirmed',
                 'Waitlisted',
                 'Rejected',
