@@ -119,3 +119,27 @@ export const submitForMedicalReview = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const confirmBooking = async (req, res) => {
+  try{
+    const booking = await Booking.findById(req.params.id);
+
+    if(!booking)
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    
+    if(booking.organizationId.toString() !== req.user.organizationId)
+      return res.status(403).json({ success: false, message: 'This booking does not belong to your organization' });
+
+    if (booking.status !== 'MedicallyApproved')
+      return res.status(400).json({ success: false, message: 'This booking is not medically approved yet' });
+
+    booking.status = 'Confirmed';
+    await booking.save();
+
+    res.status(200).json({ success: true, booking });
+  }
+  catch(err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });    
+  }
+};
