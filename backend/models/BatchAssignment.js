@@ -5,7 +5,7 @@ const batchAssignmentSchema = new Schema(
     {
         batchId: { type: Schema.Types.ObjectId, ref: 'Batch', required: true },
         userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-        roleInBatch: { type: String, enum: ['TreakLeader', 'Volunteer'], required: true },
+        roleInBatch: { type: String, enum: ['TrekLeader', 'Volunteer'], required: true },
         supervisingTrekLeaderId: { type: Schema.Types.ObjectId, ref: 'User' },
     },
     { timestamps: true }

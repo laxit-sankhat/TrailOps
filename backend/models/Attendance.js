@@ -4,9 +4,9 @@ const { Schema, model } = mongoose;
 const attendenceSchema = new Schema(
     {
         participantId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-        checkPointId: { type: Schema.Types.ObjectId, ref: 'CheckPoint', required: true },
+        checkpointId: { type: Schema.Types.ObjectId, ref: 'CheckPoint', required: true },
         batchId: { type: Schema.Types.ObjectId, ref: 'Batch', required: true },
-        markedByUserID: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        markedByUserId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         timestamp: { type: Date, default: Date.now },
     },
     { timestamps: true }

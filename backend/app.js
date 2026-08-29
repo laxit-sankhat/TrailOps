@@ -11,6 +11,9 @@ import staffRoutes from './routes/staffRoutes.js';
 import participantRoutes from './routes/participantRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import medicalRoutes from './routes/medicalRoutes.js';
+import attendanceRoutes from './routes/attendanceRoutes.js';
+import checkpointRoutes from './routes/checkpointRoutes.js';
+import batchAssignmentRoutes from './routes/batchAssignmentRoutes.js';
 
 const app = express();
 
@@ -33,6 +36,9 @@ app.use('/api/staff', staffRoutes);
 app.use('/api/participants', participantRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/medical', medicalRoutes);
+app.use('/api/checkpoints', checkpointRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/batch-assignments', batchAssignmentRoutes);
 
 // Global error handler - always last
 app.use((err, req, res, next) => {
