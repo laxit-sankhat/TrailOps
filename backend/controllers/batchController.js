@@ -38,6 +38,7 @@ export const createBatch = async (req, res) => {
 
         const batch = await Batch.create({
             tripId,
+            organizationId: trip.organizationId,
             batchName,
             startDate,
             endDate,

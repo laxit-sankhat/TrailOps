@@ -3,6 +3,7 @@ const { Schema, model } = mongoose;
 
 const batch = new Schema(
     {
+        organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
         tripId: { type: Schema.Types.ObjectId, ref: 'Trip', required: true },
         batchName: { type: String },
         startDate: { type: Date },

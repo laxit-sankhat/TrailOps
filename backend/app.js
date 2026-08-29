@@ -19,6 +19,8 @@ import incidentRoutes from './routes/incidentRoutes.js';
 import gearRoutes from './routes/gearRoutes.js';
 import certificateRoutes from './routes/certificateRoutes.js'
 import feedbackRoutes from './routes/feedbackRoutes.js'
+import trekStatusRoutes from './routes/trekStatusRoutes.js'
+import analyticsRoutes from './routes/analyticsRoutes.js'
 
 const app = express();
 
@@ -49,6 +51,8 @@ app.use('/api/incidents', incidentRoutes);
 app.use('/api/gear', gearRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/trek-status', trekStatusRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Global error handler - always last
 app.use((err, req, res, next) => {
