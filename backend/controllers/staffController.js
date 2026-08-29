@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import OrganizationMembership from '../models/OrganizationMembership.js';
 
-const ALLOWED_STAFF_ROLES = ['TripCoordinator', 'MedicalOfficer', 'TrekLeader'];
+const ALLOWED_STAFF_ROLES = ['TripCoordinator', 'MedicalOfficer', 'TrekLeader', 'Volunteer'];
 
 export const createStaffMember = async (req, res) => {
     try {
