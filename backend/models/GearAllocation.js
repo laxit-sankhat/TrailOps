@@ -12,10 +12,11 @@ const gearAllocation = new Schema(
         conditionOnReturn: { type: String },
 
         fineAmount: { type: Number, default: 0 },
-        fineReason: { type: String, 
-            enum: ['None', 'Late', 'MinorDamage', 'MajorDamage', 'SevereDamage', 'Loss', 'Other'],
+        fineReason: {
+            type: String,
+            enum: ['None', 'Late', 'MinorDamage', 'ModerateDamage', 'SevereDamage', 'Lost'],
             default: 'None'
-         },
+        },
     },
     { timestamps: true }
 );

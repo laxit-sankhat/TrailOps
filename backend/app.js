@@ -16,6 +16,7 @@ import checkpointRoutes from './routes/checkpointRoutes.js';
 import batchAssignmentRoutes from './routes/batchAssignmentRoutes.js';
 import sosRoutes from './routes/sosRoutes.js';
 import incidentRoutes from './routes/incidentRoutes.js';
+import gearRoutes from './routes/gearRoutes.js';
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/batch-assignments', batchAssignmentRoutes);
 app.use('/api/sos', sosRoutes);
 app.use('/api/incidents', incidentRoutes);
+app.use('/api/gear', gearRoutes);
 
 // Global error handler - always last
 app.use((err, req, res, next) => {
