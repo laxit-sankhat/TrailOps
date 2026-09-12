@@ -17,10 +17,11 @@ import batchAssignmentRoutes from './routes/batchAssignmentRoutes.js';
 import sosRoutes from './routes/sosRoutes.js';
 import incidentRoutes from './routes/incidentRoutes.js';
 import gearRoutes from './routes/gearRoutes.js';
-import certificateRoutes from './routes/certificateRoutes.js'
-import feedbackRoutes from './routes/feedbackRoutes.js'
-import trekStatusRoutes from './routes/trekStatusRoutes.js'
-import analyticsRoutes from './routes/analyticsRoutes.js'
+import certificateRoutes from './routes/certificateRoutes.js';
+import feedbackRoutes from './routes/feedbackRoutes.js';
+import trekStatusRoutes from './routes/trekStatusRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
+import bookingGroupRoutes from './routes/bookingGroupRoutes.js';
 
 const app = express();
   
@@ -53,6 +54,7 @@ app.use('/api/certificates', certificateRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/trek-status', trekStatusRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/booking-groups', bookingGroupRoutes);
 
 // Global error handler - always last
 app.use((err, req, res, next) => {

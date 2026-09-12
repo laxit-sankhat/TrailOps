@@ -10,6 +10,7 @@ const bookingSchema = new Schema(
         status: {
             type: String,
             enum: [
+                'Draft',
                 'Inquiry',
                 'PendingMedicalReview',
                 'MedicallyApproved',
@@ -20,6 +21,8 @@ const bookingSchema = new Schema(
             ],
             default: 'Inquiry'
         },
+
+        groupId: { type: Schema.Types.ObjectId, ref: 'BookingGroup', default: null },
         qrCodeValue: { type: String },
     },
     { timestamps: true }

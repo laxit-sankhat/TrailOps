@@ -66,11 +66,29 @@ export const cancelBooking = async (req, res) => {
       const nextInLine = await Booking.findOne({
         batchId: booking.batchId,
         status: 'Waitlisted'
-      }).sort({ registeredAt: 1 }); // ascending = oldest first
+      }).sort({ registeredAt: 1 });
 
       if (nextInLine) {
-        nextInLine.status = 'Inquiry';
-        await nextInLine.save();
+        if (nextInLine.groupId) {
+          const groupMembers = await Booking.find({ groupId: nextInLine.groupId, status: 'Waitlisted' });
+          const currentlyOccupied = await Booking.countDocuments({
+            batchId: booking.batchId,
+            status: { $in: ACTIVE_STATUSES }
+          });
+          const batchDoc = await Batch.findById(booking.batchId);
+          const seatsFree = batchDoc.maxCapacity - currentlyOccupied;
+
+          if (seatsFree >= groupMembers.length) {
+            await Booking.updateMany(
+              { _id: { $in: groupMembers.map(m => m._id) } },
+              { $set: { status: 'Inquiry' } }
+            );
+          }
+          // else: not enough freed capacity for the whole group yet - they stay waitlisted, promotion skipped this cycle
+        } else {
+          nextInLine.status = 'Inquiry';
+          await nextInLine.save();
+        }
       }
     }
 
