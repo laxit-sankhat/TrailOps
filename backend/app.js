@@ -23,7 +23,7 @@ import trekStatusRoutes from './routes/trekStatusRoutes.js'
 import analyticsRoutes from './routes/analyticsRoutes.js'
 
 const app = express();
-
+  
 connectDB();
 
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));

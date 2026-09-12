@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-const booking = new Schema(
+const bookingSchema = new Schema(
     {
         participantId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         batchId: { type: Schema.Types.ObjectId, ref: 'Batch', required: true },
@@ -25,5 +25,9 @@ const booking = new Schema(
     { timestamps: true }
 );
 
-const Booking = model('Booking', booking);
+bookingSchema.index({ batchId: 1, status: 1 });
+bookingSchema.index({ organizationId: 1 });
+bookingSchema.index({ participantId: 1 });
+
+const Booking = model('Booking', bookingSchema);
 export default Booking;

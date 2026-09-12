@@ -1,5 +1,5 @@
 import express from 'express';
-import { createBooking, cancelBooking, submitForMedicalReview, confirmBooking } from '../controllers/bookingController.js';
+import { createBooking, cancelBooking, submitForMedicalReview, confirmBooking, getBookingQRCode } from '../controllers/bookingController.js';
 import {verifyToken, restrictTo } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -12,4 +12,6 @@ router.post('/:id/submit-review', verifyToken, restrictTo('Participant'), submit
 
 router.patch('/confirm/:id', verifyToken, restrictTo('TripCoordinator'), confirmBooking);
 
-export default router;
+router.get('/:id/qr', verifyToken, restrictTo('Participant'), getBookingQRCode);
+
+export default router;  

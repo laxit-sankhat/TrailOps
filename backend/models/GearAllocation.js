@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-const gearAllocation = new Schema(
+const gearAllocationSchema = new Schema(
     {
         gearItemId: { type: Schema.Types.ObjectId, ref: 'GearItem', required: true },
         participantId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
@@ -21,5 +21,7 @@ const gearAllocation = new Schema(
     { timestamps: true }
 );
 
-const GearAllocation = model('GearAllocation', gearAllocation);
+gearAllocationSchema.index({ gearItemId: 1, returnedAt: 1 });
+
+const GearAllocation = model('GearAllocation', gearAllocationSchema);
 export default GearAllocation;

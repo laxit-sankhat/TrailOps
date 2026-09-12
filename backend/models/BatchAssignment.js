@@ -11,6 +11,8 @@ const batchAssignmentSchema = new Schema(
     { timestamps: true }
 );
 
+batchAssignmentSchema.index({ batchId: 1, userId: 1 });
+
 const BatchAssignment = model('BatchAssignment', batchAssignmentSchema);
 export default BatchAssignment;
 

@@ -17,5 +17,7 @@ const medicalReviewSchema = new Schema(
     { timestamps: true }
 );
 
+medicalReviewSchema.index({ organizationId: 1, status: 1 });
+
 const MedicalReview = model('MedicalReview', medicalReviewSchema);
 export default MedicalReview;

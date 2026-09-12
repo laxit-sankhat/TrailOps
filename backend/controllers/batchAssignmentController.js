@@ -37,6 +37,24 @@ export const createBatchAssignment = async (req, res) => {
       return res.status(400).json({ success: false, message: 'supervisingTrekLeaderId is required when assigning a Volunteer' });
     }
 
+    const existingAssignment = await BatchAssignment.find({ userId });
+
+    const newBatch = batch; 
+
+    for (const existing of existingAssignment) {
+      const extingBatch = await Batch.findById(existing.batchId);
+
+      if(!extingBatch) continue;
+
+      const overlaps = newBatch.startDate <= existingBatch.endDate && existingBatch.startDate <= newBatch.endDate;
+
+      if(overlaps)
+        return res.status(409).json({
+          sucess: false,
+          message: `This user is already assigned to another batch (${existingBatch.batchName}) with overlapping dates`
+        });
+    }  
+      
     const assignment = await BatchAssignment.create({
       batchId,
       userId,

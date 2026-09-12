@@ -54,3 +54,25 @@ export const createBatch = async (req, res) => {
         res.status(500).json({ success: false, message: err.message });
     }
 };
+
+export const completeBatch = async (req, res) => {
+  try {
+    const batch = await Batch.findById(req.params.id);
+
+    if (!batch) {
+      return res.status(404).json({ success: false, message: 'Batch not found' });
+    }
+
+    if (batch.organizationId.toString() !== req.user.organizationId) {
+      return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
+    }
+
+    batch.status = 'Completed';
+    await batch.save();
+
+    res.status(200).json({ success: true, batch });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

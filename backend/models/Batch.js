@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
-const batch = new Schema(
+const batchSchema = new Schema(
     {
         organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
         tripId: { type: Schema.Types.ObjectId, ref: 'Trip', required: true },
@@ -14,5 +14,8 @@ const batch = new Schema(
     }
 );
 
-const Batch = model('Batch', batch);
+batchSchema.index({ tripId: 1 });
+batchSchema.index({ organizationId: 1 });
+
+const Batch = model('Batch', batchSchema);
 export default Batch;

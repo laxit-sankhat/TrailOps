@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import OrganizationMembership from "../models/OrganizationMembership.js";
 import RefreshToken from "../models/RefreshToken.js";
+import crypto from 'crypto';
 
 //creates AccessToken
 const issueAccessToken = (user, organizationId) => {
@@ -196,4 +197,65 @@ export const logout = async (req, res) => {
             message: err.message
         });
     }
+};
+
+export const requestPasswordReset = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      // Same principle as login - don't reveal whether this email exists
+      return res.status(200).json({ success: true, message: 'If an account with this email exists, a reset token has been generated' });
+    }
+
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = await bcrypt.hash(rawToken, 10);
+
+    user.resetTokenHash = tokenHash;
+    user.resetTokenExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Reset token generated (would normally be emailed)',
+      resetToken: rawToken // for testing only - a real system would email this, never return it
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, resetToken, newPassword } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user || !user.resetTokenHash || !user.resetTokenExpiresAt) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired reset request' });
+    }
+
+    if (user.resetTokenExpiresAt < new Date()) {
+      return res.status(400).json({ success: false, message: 'Reset token has expired' });
+    }
+
+    const isMatch = await bcrypt.compare(resetToken, user.resetTokenHash);
+
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired reset request' });
+    }
+
+    user.passwordHash = await bcrypt.hash(newPassword, 10);
+    user.resetTokenHash = null;
+    user.resetTokenExpiresAt = null;
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Password reset successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
 };

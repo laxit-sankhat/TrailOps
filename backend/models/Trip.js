@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-const trip = new Schema(
+const tripSchema = new Schema(
   {
     organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
     name: String,
@@ -19,6 +19,8 @@ const trip = new Schema(
   }
 );
 
-const Trip = model('Trip', trip);
+tripSchema.index({ organizationId: 1 });
+
+const Trip = model('Trip', tripSchema);
 
 export default Trip;

@@ -31,6 +31,9 @@ const userSchema = new Schema(
             required: true
         },
 
+        resetTokenHash: { type: String, default: null },
+        resetTokenExpiresAt: { type: Date, default: null },
+
         // MedicalOfficer only
         licenseNumber: { type: String },
         specialization: { type: String },

@@ -3,6 +3,7 @@ import Batch from '../models/Batch.js';
 import Trip from '../models/Trip.js';
 import MedicalReview from '../models/MedicalReview.js';
 import MedicalProfile from '../models/MedicalProfile.js';
+import QRCode from 'qrcode';
 
 const ACTIVE_STATUSES = ['Inquiry', 'PendingMedicalReview', 'MedicallyApproved', 'Confirmed'];
 
@@ -134,6 +135,7 @@ export const confirmBooking = async (req, res) => {
       return res.status(400).json({ success: false, message: 'This booking is not medically approved yet' });
 
     booking.status = 'Confirmed';
+    booking.qrCodeValue = booking._id.toString(); // opaque reference - just the booking's own ID
     await booking.save();
 
     res.status(200).json({ success: true, booking });
@@ -143,3 +145,28 @@ export const confirmBooking = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });    
   }
 };
+
+export const getBookingQRCode = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    if (booking.participantId.toString() !== req.user.userId) {
+      return res.status(403).json({ success: false, message: 'This is not your booking' });
+    }
+
+    if (booking.status !== 'Confirmed') {
+      return res.status(400).json({ success: false, message: 'QR code is only available for confirmed bookings' });
+    }
+
+    const qrImageDataUrl = await QRCode.toDataURL(booking.qrCodeValue);
+
+    res.status(200).json({ success: true, qrImage: qrImageDataUrl });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};  

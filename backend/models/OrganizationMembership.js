@@ -20,5 +20,7 @@ organizationMembershipSchema.index(
   { unique: true, partialFilterExpression: { role: 'OrgAdmin' } }
 );
 
+organizationMembershipSchema.index({ userId: 1 });
+
 const OrganizationMembership = model('OrganizationMembership', organizationMembershipSchema);
 export default OrganizationMembership;
