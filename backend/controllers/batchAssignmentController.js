@@ -71,3 +71,17 @@ export const createBatchAssignment = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const removeBatchAssignment = async (req, res) => {
+  try {
+    const assignment = await BatchAssignment.findById(req.params.id);
+    if (!assignment) return res.status(404).json({ success: false, message: 'Assignment not found' });
+
+    await BatchAssignment.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({ success: true, message: 'Assignment removed' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

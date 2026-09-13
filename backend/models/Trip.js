@@ -12,7 +12,8 @@ const tripSchema = new Schema(
     startDate: Date,
     endDate: Date,
     basePrice: { type: Number, min: 0 },
-    status: String
+    status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
+    imageUrl: { type: String, default: null },
   },
   {
     timestamps: true

@@ -76,3 +76,20 @@ export const completeBatch = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const searchBatches = async (req, res) => {
+  try {
+    const { batchName, status, startDate, endDate } = req.query;
+    const filter = { organizationId: req.user.organizationId };
+    if (batchName) filter.batchName = { $regex: batchName, $options: 'i' };
+    if (status) filter.status = status;
+    if (startDate) filter.startDate = { $gte: new Date(startDate) };
+    if (endDate) filter.endDate = { $lte: new Date(endDate) };
+
+    const batches = await Batch.find(filter);
+    res.status(200).json({ success: true, count: batches.length, batches });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

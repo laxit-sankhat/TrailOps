@@ -118,3 +118,22 @@ export const returnGear = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const removeGearItem = async (req, res) => {
+  try {
+    const gearItem = await GearItem.findById(req.params.id);
+    if (!gearItem) return res.status(404).json({ success: false, message: 'Gear item not found' });
+
+    if (gearItem.organizationId.toString() !== req.user.organizationId) {
+      return res.status(403).json({ success: false, message: 'This gear item does not belong to your organization' });
+    }
+
+    gearItem.status = 'Inactive'; // soft delete, preserves history/allocations
+    await gearItem.save();
+
+    res.status(200).json({ success: true, gearItem });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

@@ -203,3 +203,15 @@ export const getBookingQRCode = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };  
+
+export const getParticipantsByBatch = async (req, res) => {
+  try {
+    const bookings = await Booking.find({ batchId: req.params.batchId })
+      .populate('participantId', 'fullName email mobileNumber');
+
+    res.status(200).json({ success: true, count: bookings.length, bookings });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

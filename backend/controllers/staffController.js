@@ -48,3 +48,22 @@ export const createStaffMember = async (req, res) => {
         res.status(500).json({ success: false, message: err.message });
     }
 };
+
+export const removeStaffMember = async (req, res) => {
+  try {
+    const membership = await OrganizationMembership.findOne({
+      userId: req.params.userId,
+      organizationId: req.user.organizationId
+    });
+
+    if (!membership) return res.status(404).json({ success: false, message: 'Staff member not found in your organization' });
+
+    membership.status = 'Inactive';
+    await membership.save();
+
+    res.status(200).json({ success: true, message: 'Staff member deactivated' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

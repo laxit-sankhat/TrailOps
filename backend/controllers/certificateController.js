@@ -40,3 +40,18 @@ export const generateCertificate = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const verifyCertificate = async (req, res) => {
+  try {
+    const certificate = await Certificate.findOne({ certificateCode: req.params.code });
+
+    if (!certificate) {
+      return res.status(200).json({ success: true, valid: false });
+    }
+
+    res.status(200).json({ success: true, valid: true, certificate });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
