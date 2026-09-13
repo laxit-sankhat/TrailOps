@@ -7,6 +7,9 @@ export const createCheckpoint = async (req, res) => {
     try{
         const { batchId, name, sequenceOrder } = req.body;      
 
+        // This checks assignment to THIS SPECIFIC batch, not just org membership -
+        // a Trek Leader in the same org but on a different trek should not be able
+        // to mark attendance or add checkpoints for a batch they're not running.
         const assignment = await BatchAssignment.findOne({
             batchId,
             userId: req.user.userId,

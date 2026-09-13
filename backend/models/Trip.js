@@ -7,11 +7,11 @@ const tripSchema = new Schema(
     name: String,
     location: String,
     description: String,
-    difficultyLevel: String,
-    durationInHours: Number,
+    difficultyLevel: { type: String, enum: ['Easy', 'Moderate', 'Difficult'] },
+    durationInHours: { type: Number, min: 1, max: 90 },
     startDate: Date,
     endDate: Date,
-    basePrice: Number,
+    basePrice: { type: Number, min: 0 },
     status: String
   },
   {

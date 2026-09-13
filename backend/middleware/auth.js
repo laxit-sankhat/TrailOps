@@ -52,6 +52,9 @@ export const restrictTo = (...allowedRoles) => {
 };
 
 export const restrictToOwnOrg = (req, res, next) => {
+    // Super Admin bypasses org-scoping entirely - they operate across all orgs.
+    // Everyone else must have their target organizationId (from URL or body)
+    // match their own token's organizationId, or they're blocked.
     if (req.user.role === 'SuperAdmin') {
         return next(); 
     }

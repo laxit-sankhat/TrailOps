@@ -7,8 +7,16 @@ const batchSchema = new Schema(
         tripId: { type: Schema.Types.ObjectId, ref: 'Trip', required: true },
         batchName: { type: String },
         startDate: { type: Date },
-        endDate: { type: Date },
-        maxCapacity: { type: Number },
+        endDate: {
+            type: Date,
+            validate: {
+                validator: function (value) {
+                return value > this.startDate;
+                },
+                message: 'endDate must be after startDate'
+            }
+        },
+        maxCapacity: { type: Number, min: 1, max: 500 },
         status: { type: String, enum: ['Open', 'Full', 'Completed', 'Cancelled '], default: 'Open' }
         
     }

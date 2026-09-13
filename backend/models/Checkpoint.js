@@ -5,7 +5,7 @@ const checkpointSchema = new Schema(
     {
         batchId: { type: Schema.Types.ObjectId, ref: 'Batch', required: true },
         name: { type: String },
-        sequinceOrder: { type: Number },
+        sequenceOrder: { type: Number, min: 1 },
     },
     { timestamps: true }
 );

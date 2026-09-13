@@ -5,7 +5,14 @@ const organizationSchema = new Schema(
     {
         name: { type: String, required: true },
         registrationDetails: { type: String },
-        contactEmail: { type: String, required: true },
+        contactEmail: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true,
+            match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address']
+        },
         address: { type: String },
         status: {
             type: String,

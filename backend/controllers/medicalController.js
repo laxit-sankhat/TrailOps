@@ -48,6 +48,10 @@ export const reviewMedicalSubmission = async (req, res) => {
     review.medicalReviewerId = req.user.userId;
     await review.save();
 
+    // NeedsMoreInfo leaves the booking at PendingMedicalReview (participant can
+    // re-upload/act) - Rejected is a FINAL medical decision and moves the booking
+    // to Rejected directly. Trip Coordinator only communicates this outcome;
+    // they never override the medical call itself.
     if (status === 'Approved') {
       const booking = await Booking.findById(review.bookingId);
       booking.status = 'MedicallyApproved';

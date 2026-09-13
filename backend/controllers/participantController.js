@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import { isPasswordValid } from '../utils/validators.js';
 
 export const registerParticipant = async (req, res) => {
   try {
@@ -10,6 +11,10 @@ export const registerParticipant = async (req, res) => {
       return res.status(400).json({ success: false, message: 'An account with this email already exists' });
     }
 
+    if (!isPasswordValid(password)) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 8 characters long' });
+    }
+
     const passwordHash = await bcrypt.hash(password, 10);
 
     const participant = await User.create({
@@ -18,7 +23,10 @@ export const registerParticipant = async (req, res) => {
       passwordHash,
       mobileNumber,
       dob,
-      role: 'Participant' // hardcoded - never trust client-supplied role here
+      // role is hardcoded to 'Participant' and never accepted from the request
+      // body - this endpoint is public/unauthenticated, so trusting a client-
+      // supplied role here would let anyone self-register as SuperAdmin.
+      role: 'Participant' 
     });
 
     res.status(201).json({

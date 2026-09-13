@@ -2,6 +2,7 @@ import Organization from "../models/Organization.js";
 import User from "../models/User.js";
 import OrganizationMembership from "../models/OrganizationMembership.js";
 import bcrypt from "bcryptjs";
+import { isPasswordValid } from '../utils/validators.js';
 
 export const createOrganization = async (req, res) => {
     try{
@@ -17,6 +18,10 @@ export const createOrganization = async (req, res) => {
                 address
             }
         );
+
+        if (!isPasswordValid(orgAdminPassword)) {
+            return res.status(400).json({ success: false, message: 'Password must be at least 8 characters long' });
+        }
 
         const passwordHash = await bcrypt.hash(orgAdminPassword, 10);
 

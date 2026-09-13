@@ -23,6 +23,9 @@ export const createBooking = async (req, res) => {
 
     const trip = await Trip.findById(batch.tripId);
 
+    // We count bookings in ANY active status (not just Confirmed), because a booking
+    // in PendingMedicalReview or MedicallyApproved still holds a seat - if we only
+    // counted Confirmed, we could overbook once pending approvals came through.
     const activeCount = await Booking.countDocuments({
       batchId,
       status: { $in: ACTIVE_STATUSES }
@@ -53,10 +56,16 @@ export const cancelBooking = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Booking not found' });
     }
 
+    // booking.participantId is a real ObjectId from the DB; req.user.userId is a
+    // plain string decoded from the JWT. Must convert before comparing, or this
+    // check silently never matches even for the correct owner.
     if (booking.participantId.toString() !== req.user.userId) {
       return res.status(403).json({ success: false, message: 'This is not your booking' });
     }
 
+    // On cancellation, only promote the next waitlisted person if THIS booking was
+    // actually holding a seat. A booking that was already Waitlisted never held a
+    // seat, so cancelling it shouldn't free anything up or trigger promotion.
     const wasHoldingASeat = ['Inquiry', 'PendingMedicalReview', 'MedicallyApproved', 'Confirmed'].includes(booking.status);
 
     booking.status = 'Cancelled';
@@ -71,6 +80,9 @@ export const cancelBooking = async (req, res) => {
       if (nextInLine) {
         if (nextInLine.groupId) {
           const groupMembers = await Booking.find({ groupId: nextInLine.groupId, status: 'Waitlisted' });
+          // Capacity check counts ANY active status (Inquiry through Confirmed), not just
+          // Confirmed - because a pending approval still occupies a seat. Counting only
+          // Confirmed would let the system overbook once those approvals came through.
           const currentlyOccupied = await Booking.countDocuments({
             batchId: booking.batchId,
             status: { $in: ACTIVE_STATUSES }
@@ -78,6 +90,9 @@ export const cancelBooking = async (req, res) => {
           const batchDoc = await Batch.findById(booking.batchId);
           const seatsFree = batchDoc.maxCapacity - currentlyOccupied;
 
+          // Group promotion: never split a waitlisted group. Only promote the whole
+          // group together once enough freed capacity exists for every member - if
+          // partial capacity opened up, the group stays waitlisted until it's fully covered.
           if (seatsFree >= groupMembers.length) {
             await Booking.updateMany(
               { _id: { $in: groupMembers.map(m => m._id) } },

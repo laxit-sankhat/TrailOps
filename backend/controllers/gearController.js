@@ -97,6 +97,10 @@ export const returnGear = async (req, res) => {
     } else if (conditionOnReturn === 'Severe') {
       fineAmount += gearItem.severeDamageFee;
       fineReason = fineReason === 'None' ? 'SevereDamage' : fineReason;
+      // Lost items REPLACE the fine entirely rather than adding to it - a lost item
+      // can't also be "returned late," so charging both would double-penalize.
+      // Every other damage tier is additive with lateness, since a damaged-but-
+      // returned item can genuinely be both late AND damaged.
     } else if (conditionOnReturn === 'Lost') {
       fineAmount = gearItem.lostItemFee; // lost overrides everything - full replacement, not additive
       fineReason = 'Lost';

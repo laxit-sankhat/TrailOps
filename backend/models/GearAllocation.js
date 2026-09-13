@@ -7,11 +7,27 @@ const gearAllocationSchema = new Schema(
         participantId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         batchId: { type: Schema.Types.ObjectId, ref: 'Batch', required: true },
         allocatedAt: { type: Date, default: Date.now },
-        expectedReturnDate: { type: Date },
-        returnedAt: { type: Date },
+        expectedReturnDate: {
+            type: Date,
+            validate: {
+                validator: function (value) {
+                return value > this.allocatedAt;
+                },
+                message: 'expectedReturnDate must be after allocatedAt'
+            }
+        },
+        returnedAt: { 
+            type: Date,
+            validate: {
+                validator: function (value) {
+                return value > this.allocatedAt;
+                },
+                message: 'returnedAt must be after allocatedAt'
+            }
+         },
         conditionOnReturn: { type: String },
 
-        fineAmount: { type: Number, default: 0 },
+        fineAmount: { type: Number, min: 0, default: 0 },
         fineReason: {
             type: String,
             enum: ['None', 'Late', 'MinorDamage', 'ModerateDamage', 'SevereDamage', 'Lost'],

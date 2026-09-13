@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import OrganizationMembership from "../models/OrganizationMembership.js";
 import RefreshToken from "../models/RefreshToken.js";
 import crypto from 'crypto';
+import { isPasswordValid } from '../utils/validators.js';
 
 //creates AccessToken
 const issueAccessToken = (user, organizationId) => {
@@ -38,6 +39,9 @@ export const login = async (req, res) => {
 
         const user = await User.findOne({ email });
 
+        // Same generic error for "no such user" and "wrong password" - deliberately
+        // vague to prevent attackers from using this endpoint to discover which
+        // emails have real accounts (user enumeration).
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -246,6 +250,10 @@ export const resetPassword = async (req, res) => {
 
     if (!isMatch) {
       return res.status(400).json({ success: false, message: 'Invalid or expired reset request' });
+    }
+
+    if (!isPasswordValid(newPassword)) {
+        return res.status(400).json({ success: false, message: 'Password must be at least 8 characters long' });
     }
 
     user.passwordHash = await bcrypt.hash(newPassword, 10);

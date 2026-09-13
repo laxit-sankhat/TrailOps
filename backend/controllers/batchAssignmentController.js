@@ -46,6 +46,9 @@ export const createBatchAssignment = async (req, res) => {
 
       if(!extingBatch) continue;
 
+      // Standard interval-overlap check: two date ranges overlap if each one's
+      // start is before or on the other's end. Prevents assigning the same Trek
+      // Leader/Volunteer to two batches happening at overlapping times.
       const overlaps = newBatch.startDate <= existingBatch.endDate && existingBatch.startDate <= newBatch.endDate;
 
       if(overlaps)
