@@ -1,6 +1,6 @@
 import express from 'express';
-import { login, refresh, logout, requestPasswordReset, resetPassword } from '../controllers/authController.js';
-import { verifyRefreshToken } from '../middleware/auth.js';
+import { login, refresh, logout, requestPasswordReset, resetPassword, getMe } from '../controllers/authController.js';
+import { verifyRefreshToken, verifyToken } from '../middleware/auth.js';
 import rateLimit from 'express-rate-limit'; 
 
 const router = express.Router();
@@ -20,5 +20,7 @@ router.post('/logout', verifyRefreshToken, logout);
 router.post('/request-password-reset', requestPasswordReset);
 
 router.post('/reset-password', resetPassword);
+
+router.get('/me', verifyToken, getMe);
 
 export default router;
