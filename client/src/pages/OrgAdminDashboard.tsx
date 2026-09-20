@@ -6,7 +6,7 @@ import { createBatch } from '../services/batchService'
 
 export default function OrgAdminDashboard() {
 
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const [trips, setTrips] = useState<any[]>([]);
 

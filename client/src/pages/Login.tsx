@@ -1,4 +1,4 @@
-import { use, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import type {Role} from '../types';
 import { useNavigate } from 'react-router-dom';
@@ -36,7 +36,7 @@ export default function Login() {
       setError('Invalid email or password');
     }
   };
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <h2>TrailOps Login</h2>

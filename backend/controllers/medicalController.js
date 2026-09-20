@@ -73,7 +73,9 @@ export const reviewMedicalSubmission = async (req, res) => {
 
 export const getPendingReviews = async (req, res) => {
   try{
-    const reviews = await MedicalReview.find({ status: 'Pending', organizationId: req.user.organizationId });
+    const reviews = await MedicalReview.find({ status: 'Pending', organizationId: req.user.organizationId })
+      .populate('medicalProfileId')
+      .populate('bookingId');
     res.status(200).json({ success: true, count: reviews.length, reviews });
   }
   catch(err){

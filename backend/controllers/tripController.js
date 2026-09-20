@@ -105,3 +105,13 @@ export const uploadTripImage = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const getAllApprovedTrips = async (req, res) => {
+  try {
+    const trips = await Trip.find({ status: 'Active' }).populate('organizationId', 'name');
+    res.status(200).json({ success: true, count: trips.length, trips });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
