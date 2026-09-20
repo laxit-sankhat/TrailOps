@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { getTripsByOrg, getAllPublicTrips } from '../services/tripService';
 import { createBooking, submitForMedicalReview } from '../services/bookingService';
 import { uploadMedicalProfile } from '../services/medicalService';
+import { getBookingQR } from '../services/bookingService';
 
 export default function ParticipantDashboard() {
   const { user } = useAuth();
@@ -64,6 +65,17 @@ export default function ParticipantDashboard() {
     }
     };
 
+    const [qrImage, setQrImage] = useState('');
+
+    const handleGetQR = async () => {
+    try {
+        const response = await getBookingQR(bookingId);
+        setQrImage(response.data.qrImage);
+    } catch (err: any) {
+        setMessage(err.response?.data?.message || 'Something went wrong');
+    }
+    };
+
   return (
     <div>
       <Navbar />
@@ -95,6 +107,10 @@ export default function ParticipantDashboard() {
     <h2>Submit Booking for Review</h2>
     <input placeholder="Booking ID" value={bookingId} onChange={(e) => setBookingId(e.target.value)} />
     <button onClick={handleSubmitReview}>Submit for Review</button>
+
+    <h2>Get My QR Code</h2>
+    <button onClick={handleGetQR}>Get QR</button>
+    {qrImage && <img src={qrImage} alt="Booking QR Code" style={{ width: '200px' }} />}
 
     </div>
   );

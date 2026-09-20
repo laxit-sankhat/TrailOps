@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { createTrip, getTripsByOrg } from '../services/tripService';
-import { createBatch } from '../services/batchService'
+import { createBatch } from '../services/batchService';
+import { createBatchAssignment } from '../services/batchAssignmentService';
 
 export default function OrgAdminDashboard() {
 
@@ -63,6 +64,23 @@ export default function OrgAdminDashboard() {
     }
   };
 
+  const [assignForm, setAssignForm] = useState({ batchId: '', userId: '', roleInBatch: 'TrekLeader', supervisingTrekLeaderId: '' });
+  const [assignMessage, setAssignMessage] = useState('');
+
+  const handleAssignChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setAssignForm({ ...assignForm, [e.target.name]: e.target.value });
+  };
+
+  const handleAssignSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createBatchAssignment(assignForm);
+      setAssignMessage('Assignment created successfully');
+    } catch (err: any) {
+      setAssignMessage(err.response?.data?.message || 'Something went wrong');
+    }
+  };
+
   return (
     <div>
       <Navbar />
@@ -104,6 +122,20 @@ export default function OrgAdminDashboard() {
         <button type="submit">Create Batch</button>
       </form>
       {batchMessage && <p>{batchMessage}</p>}
+
+      <h2>Assign Trek Leader / Volunteer to Batch</h2>
+      <form onSubmit={handleAssignSubmit}>
+        <input name="batchId" placeholder="Batch ID" onChange={handleAssignChange} />
+        <input name="userId" placeholder="User ID (Trek Leader/Volunteer)" onChange={handleAssignChange} />
+        <select name="roleInBatch" onChange={handleAssignChange}>
+          <option value="TrekLeader">Trek Leader</option>
+          <option value="Volunteer">Volunteer</option>
+        </select>
+        <input name="supervisingTrekLeaderId" placeholder="Supervising Trek Leader ID (Volunteer only)" onChange={handleAssignChange} />
+        <button type="submit">Assign</button>
+      </form>
+      {assignMessage && <p>{assignMessage}</p>}
+
     </div>
   );
 }
