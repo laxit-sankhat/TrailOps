@@ -38,6 +38,16 @@ export const createStaffMember = async (req, res) => {
             role
         });
 
+        // Volunteer does NOT get an OrganizationMembership - their org connection
+        // happens only through BatchAssignment, not org-level staff membership.
+        if (role !== 'Volunteer') {
+            await OrganizationMembership.create({
+                userId: staffUser._id,
+                organizationId: req.user.organizationId,
+                role
+            });
+        }
+
         res.status(201).json({
             success: true,
             staffUser: { id: staffUser._id, fullName: staffUser.fullName, email: staffUser.email, role: staffUser.role }

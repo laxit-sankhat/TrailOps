@@ -74,6 +74,9 @@ export const returnGear = async (req, res) => {
     }
 
     const gearItem = await GearItem.findById(allocation.gearItemId);
+    if (gearItem.organizationId.toString() !== req.user.organizationId) {
+      return res.status(403).json({ success: false, message: 'This gear allocation does not belong to your organization' });
+    }
 
     const now = new Date();
     let fineAmount = 0;

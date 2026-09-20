@@ -44,6 +44,15 @@ export const getBatchComplianceReport = async (req, res) => {
   try {
     const { batchId } = req.params;
 
+    const batch = await Batch.findById(batchId);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: 'Batch not found' });
+    }
+
+    if (req.user.role !== 'SuperAdmin' && batch.organizationId?.toString() !== req.user.organizationId) {
+      return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
+    }
+
     const totalBookings = await Booking.countDocuments({ batchId, status: { $in: ['Confirmed'] } });
     const attendedParticipants = await Attendance.distinct('participantId', { batchId });
     const attendancePercent = totalBookings > 0 ? Math.round((attendedParticipants.length / totalBookings) * 100) : 0;

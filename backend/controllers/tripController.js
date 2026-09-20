@@ -44,7 +44,8 @@ export const updateTrip = async (req, res) => {
       return res.status(403).json({ success: false, message: 'This trip does not belong to your organization' });
     }
 
-    Object.assign(trip, req.body);
+    const { name, location, description, difficultyLevel, durationDays, startDate, endDate, basePrice, status } = req.body;
+    Object.assign(trip, { name, location, description, difficultyLevel, durationDays, startDate, endDate, basePrice, status });
     await trip.save();
 
     res.status(200).json({ success: true, trip });

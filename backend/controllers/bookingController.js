@@ -206,6 +206,15 @@ export const getBookingQRCode = async (req, res) => {
 
 export const getParticipantsByBatch = async (req, res) => {
   try {
+    const batch = await Batch.findById(req.params.batchId);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: 'Batch not found' });
+    }
+
+    if (batch.organizationId.toString() !== req.user.organizationId) {
+      return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
+    }
+
     const bookings = await Booking.find({ batchId: req.params.batchId })
       .populate('participantId', 'fullName email mobileNumber');
 

@@ -77,8 +77,12 @@ export const removeBatchAssignment = async (req, res) => {
     const assignment = await BatchAssignment.findById(req.params.id);
     if (!assignment) return res.status(404).json({ success: false, message: 'Assignment not found' });
 
-    await BatchAssignment.findByIdAndDelete(req.params.id);
+    const batch = await Batch.findById(assignment.batchId);
+    if (!batch || batch.organizationId?.toString() !== req.user.organizationId) {
+      return res.status(403).json({ success: false, message: 'This assignment does not belong to your organization' });
+    }
 
+    await BatchAssignment.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: 'Assignment removed' });
   } catch (err) {
     console.error(err);

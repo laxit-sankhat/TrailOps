@@ -36,6 +36,17 @@ export const createBatch = async (req, res) => {
             assignedTrekLeaderId = trekLeaderId;
         }
 
+        const duplicateBatch = await Batch.findOne({
+          tripId,
+          batchName,
+          startDate: new Date(startDate),
+          endDate: new Date(endDate)
+        });
+
+        if (duplicateBatch) {
+          return res.status(409).json({ success: false, message: 'A batch with this name and these dates already exists for this trip' });
+        }
+
         const batch = await Batch.create({
             tripId,
             organizationId: trip.organizationId,

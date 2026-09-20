@@ -11,7 +11,7 @@ api.interceptors.request.use((config) => {
         config.headers.Authorization = `Bearer ${token}`; 
     
     return config;
-})
+})  
 
 api.interceptors.response.use(
   (response) => response,
@@ -26,7 +26,7 @@ api.interceptors.response.use(
           'http://localhost:5000/api/auth/refresh',
           {},
           { withCredentials: true }
-        );
+        );  
 
         const newAccessToken = refreshResponse.data.accessToken;
         localStorage.setItem('accessToken', newAccessToken);
