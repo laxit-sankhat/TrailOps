@@ -1,12 +1,13 @@
-import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
+import AttendanceScanner from '../components/AttendanceScanner';
 
 export default function VolunteerDashboard() {
-  const { logout } = useAuth();
-
   return (
     <div>
+      <Navbar />
       <h1>Volunteer Dashboard</h1>
-      <button onClick={() => logout()}>Log Out</button>
+      <h2>Scan Attendance</h2>
+      <AttendanceScanner />
     </div>
   );
 }
