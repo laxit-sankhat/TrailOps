@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { createTrip, getTripsByOrg } from '../services/tripService';
 import { createBatch } from '../services/batchService';
 import { createBatchAssignment } from '../services/batchAssignmentService';
+import { createGearItem } from '../services/gearService';
 
 export default function OrgAdminDashboard() {
 
@@ -81,11 +82,31 @@ export default function OrgAdminDashboard() {
     }
   };
 
+  const [gearForm, setGearForm] = useState({
+  name: '', category: '', quantity: 1, condition: 'Good',
+  dailyLateFeeRate: 50, minorDamageFee: 200, moderateDamageFee: 500, severeDamageFee: 1000, lostItemFee: 5000
+});
+
+  const [gearMessage, setGearMessage] = useState('');
+
+  const handleGearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGearForm({ ...gearForm, [e.target.name]: e.target.value });
+  };
+
+  const handleGearSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createGearItem(gearForm);
+      setGearMessage('Gear item created successfully');
+    } catch (err: any) {
+      setGearMessage(err.response?.data?.message || 'Something went wrong');
+    }
+  };
+
   return (
     <div>
       <Navbar />
       <h1>Org Admin Dashboard</h1>
-
 
       <h2>Existing Trips</h2>
       <ul>
@@ -135,6 +156,21 @@ export default function OrgAdminDashboard() {
         <button type="submit">Assign</button>
       </form>
       {assignMessage && <p>{assignMessage}</p>}
+
+      <h2>Create Gear Item</h2>
+      <form onSubmit={handleGearSubmit}>
+        <input name="name" placeholder="Item Name" onChange={handleGearChange} />
+        <input name="category" placeholder="Category" onChange={handleGearChange} />
+        <input name="quantity" type="number" placeholder="Quantity" onChange={handleGearChange} />
+        <input name="condition" placeholder="Condition" onChange={handleGearChange} />
+        <input name="dailyLateFeeRate" type="number" placeholder="Daily Late Fee" onChange={handleGearChange} />
+        <input name="minorDamageFee" type="number" placeholder="Minor Damage Fee" onChange={handleGearChange} />
+        <input name="moderateDamageFee" type="number" placeholder="Moderate Damage Fee" onChange={handleGearChange} />
+        <input name="severeDamageFee" type="number" placeholder="Severe Damage Fee" onChange={handleGearChange} />
+        <input name="lostItemFee" type="number" placeholder="Lost Item Fee" onChange={handleGearChange} />
+        <button type="submit">Create Gear Item</button>
+      </form>
+      {gearMessage && <p>{gearMessage}</p>}
 
     </div>
   );

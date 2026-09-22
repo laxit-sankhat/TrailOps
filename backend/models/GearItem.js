@@ -5,15 +5,15 @@ const gearItem = new Schema(
     {
         organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
         name: { type: String },
-        category: { type: Number, min: 0 },
+        category: { type: String },
         quantity: { type: Number },
         condition: { type: String },
         availabilityStatus: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
         
-        dailyLatefeeRate: { type: Number, min: 0, default: 0 },
+        dailyLateFeeRate: { type: Number, min: 0, default: 0 },
         minorDamageFee: { type: Number, min: 0, default: 0 },
         moderateDamageFee: { type: Number, min: 0, default: 0 },
-        serverDamageFee: { type: Number, min: 0, default: 0 },
+        severeDamageFee: { type: Number, min: 0, default: 0 },
         lostItemFee: { type: Number, min: 0, default: 0 },
     },
     { timestamps: true }
