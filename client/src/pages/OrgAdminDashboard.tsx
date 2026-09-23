@@ -5,6 +5,7 @@ import { createTrip, getTripsByOrg } from '../services/tripService';
 import { createBatch } from '../services/batchService';
 import { createBatchAssignment } from '../services/batchAssignmentService';
 import { createGearItem } from '../services/gearService';
+import { completeBatch } from '../services/batchService';
 
 export default function OrgAdminDashboard() {
 
@@ -103,6 +104,18 @@ export default function OrgAdminDashboard() {
     }
   };
 
+  const [completeBatchId, setCompleteBatchId] = useState('');
+  const [completeMessage, setCompleteMessage] = useState('');
+
+  const handleCompleteBatch = async () => {
+    try {
+      await completeBatch(completeBatchId);
+      setCompleteMessage('Batch marked as completed');
+    } catch (err: any) {
+      setCompleteMessage(err.response?.data?.message || 'Something went wrong');
+    }
+  };
+
   return (
     <div>
       <Navbar />
@@ -171,6 +184,10 @@ export default function OrgAdminDashboard() {
         <button type="submit">Create Gear Item</button>
       </form>
       {gearMessage && <p>{gearMessage}</p>}
+
+      <h2>Mark Batch Completed</h2>
+      <input placeholder="Batch ID" value={completeBatchId} onChange={(e) => setCompleteBatchId(e.target.value)} />
+      <button onClick={handleCompleteBatch}>Mark Completed</button>      
 
     </div>
   );

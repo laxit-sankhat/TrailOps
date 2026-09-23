@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import { getParticipantsByBatch, confirmBooking } from '../services/bookingService';
 import { allocateGear, returnGear } from '../services/gearService';
+import { generateCertificate } from '../services/certificateService';
 
 export default function TripCoordinatorDashboard() {
   const [batchId, setBatchId] = useState('');
@@ -59,6 +60,18 @@ export default function TripCoordinatorDashboard() {
     }
   };
 
+  const [certBookingId, setCertBookingId] = useState('');
+  const [certMessage, setCertMessage] = useState('');
+
+  const handleGenerateCert = async () => {
+    try {
+      const response = await generateCertificate(certBookingId);
+      setCertMessage(`Certificate generated: ${response.data.certificate.pdfUrl}`);
+    } catch (err: any) {
+      setCertMessage(err.response?.data?.message || 'Something went wrong');
+    }
+  };
+
   return (
     <div>
       <Navbar />
@@ -102,6 +115,17 @@ export default function TripCoordinatorDashboard() {
         <button type="submit">Return Gear</button>
       </form>
       {gearMsg && <p>{gearMsg}</p>}
+
+    <h2>Generate Certificate</h2>
+    <input placeholder="Booking ID" value={certBookingId} onChange={(e) => setCertBookingId(e.target.value)} />
+    <button onClick={handleGenerateCert}>Generate Certificate</button>
+    {certMessage && (
+      <p>
+        {certMessage.startsWith('Certificate generated') ? (
+          <>Certificate generated: <a href={certMessage.split(': ')[1]} target="_blank" rel="noopener noreferrer">View PDF</a></>
+        ) : certMessage}
+      </p>
+    )}
     </div>
   );
 }

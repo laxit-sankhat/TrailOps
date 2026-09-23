@@ -1,5 +1,5 @@
 import express from 'express';
-import { createTrip, getTripsByOrganization, updateTrip, searchTrips, uploadTripImage, getAllApprovedTrips } from '../controllers/tripController.js';
+import { createTrip, getTripsByOrganization, updateTrip, searchTrips, uploadTripImage, removeTripImage, getAllApprovedTrips } from '../controllers/tripController.js';
 import { verifyToken, restrictTo, restrictToOwnOrg } from '../middleware/auth.js';
 import upload from '../config/multer.js';
 
@@ -16,5 +16,7 @@ router.get('/:organizationId', verifyToken, restrictToOwnOrg, getTripsByOrganiza
 router.patch('/:id', verifyToken, restrictTo('OrgAdmin'), updateTrip);
 
 router.post('/:id/image', verifyToken, restrictTo('OrgAdmin'), upload.single('image'), uploadTripImage);
+
+router.delete('/:id/images/:publicId', verifyToken, restrictTo('OrgAdmin'), removeTripImage)
 
 export default router;

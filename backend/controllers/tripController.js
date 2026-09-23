@@ -96,7 +96,7 @@ export const uploadTripImage = async (req, res) => {
       stream.end(req.file.buffer);
     });
 
-    trip.imageUrl = result.secure_url;
+    trip.images.push({ url: result.secure_url, publicId: result.public_id });
     await trip.save();
 
     res.status(200).json({ success: true, trip });
@@ -105,6 +105,27 @@ export const uploadTripImage = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const removeTripImage = async (req, res) => {
+  try {
+    const { id, publicId } = req.params;
+    const trip = await Trip.findById(id);
+    if (!trip) return res.status(404).json({ success: false, message: 'Trip not found' });
+
+    if (trip.organizationId.toString() !== req.user.organizationId) {
+      return res.status(403).json({ success: false, message: 'This trip does not belong to your organization' });
+    }
+
+    await cloudinary.uploader.destroy(publicId);
+    trip.images = trip.images.filter(img => img.publicId !== publicId);
+    await trip.save();
+
+    res.status(200).json({ success: true, trip });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};  
 
 export const getAllApprovedTrips = async (req, res) => {
   try {
