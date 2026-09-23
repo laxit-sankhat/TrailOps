@@ -5,6 +5,7 @@ import { getTripsByOrg, getAllPublicTrips } from '../services/tripService';
 import { createBooking, submitForMedicalReview } from '../services/bookingService';
 import { uploadMedicalProfile } from '../services/medicalService';
 import { getBookingQR } from '../services/bookingService';
+import { submitFeedback } from '../services/feedbackService';
 
 export default function ParticipantDashboard() {
   const { user } = useAuth();
@@ -76,6 +77,25 @@ export default function ParticipantDashboard() {
     }
     };
 
+    const [feedbackForm, setFeedbackForm] = useState({
+      bookingId: '', ratingGuide: 5, ratingFood: 5, ratingSafety: 5, ratingOverall: 5, comments: ''
+    });
+    const [feedbackMessage, setFeedbackMessage] = useState('');
+
+    const handleFeedbackChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setFeedbackForm({ ...feedbackForm, [e.target.name]: e.target.value });
+    };
+
+    const handleFeedbackSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        await submitFeedback(feedbackForm);
+        setFeedbackMessage('Feedback submitted successfully');
+      } catch (err: any) {
+        setFeedbackMessage(err.response?.data?.message || 'Something went wrong');
+      }
+    };
+
   return (
     <div>
       <Navbar />
@@ -111,6 +131,18 @@ export default function ParticipantDashboard() {
     <h2>Get My QR Code</h2>
     <button onClick={handleGetQR}>Get QR</button>
     {qrImage && <img src={qrImage} alt="Booking QR Code" style={{ width: '200px' }} />}
+
+    <h2>Submit Feedback</h2>
+    <form onSubmit={handleFeedbackSubmit}>
+      <input name="bookingId" placeholder="Booking ID" onChange={handleFeedbackChange} />
+      <label>Guide Rating (1-5): <input name="ratingGuide" type="number" min="1" max="5" onChange={handleFeedbackChange} /></label>
+      <label>Food Rating (1-5): <input name="ratingFood" type="number" min="1" max="5" onChange={handleFeedbackChange} /></label>
+      <label>Safety Rating (1-5): <input name="ratingSafety" type="number" min="1" max="5" onChange={handleFeedbackChange} /></label>
+      <label>Overall Rating (1-5): <input name="ratingOverall" type="number" min="1" max="5" onChange={handleFeedbackChange} /></label>
+      <textarea name="comments" placeholder="Comments" onChange={handleFeedbackChange} />
+      <button type="submit">Submit Feedback</button>
+    </form>
+    {feedbackMessage && <p>{feedbackMessage}</p>}
 
     </div>
   );
