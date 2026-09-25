@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { createOrganization } from '../services/organizationService';
+import { getPlatformStats } from '../services/analyticsService';
 
 export default function SuperAdminDashboard() {
   const [form, setForm] = useState({
@@ -18,10 +19,26 @@ export default function SuperAdminDashboard() {
     try {
       await createOrganization(form);
       setMessage('Organization created successfully');
+      fetchPlatformStats(); // refresh count immediately
     } catch (err: any) {
       setMessage(err.response?.data?.message || 'Something went wrong');
     }
   };
+
+  const [platformStats, setPlatformStats] = useState<any>(null);
+
+  const fetchPlatformStats = async () => {
+    try {
+      const response = await getPlatformStats();
+      setPlatformStats(response.data.stats);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPlatformStats();
+  }, []);
 
   return (
     <div>
@@ -39,6 +56,15 @@ export default function SuperAdminDashboard() {
         <button type="submit">Create Organization</button>
       </form>
       {message && <p>{message}</p>}
+
+      <h2>Platform Analytics</h2>
+      {platformStats && (
+        <ul>
+          <li>Total Organizations: {platformStats.totalOrganizations}</li>
+          <li>Total Trips: {platformStats.totalTrips}</li>
+          <li>Total Bookings: {platformStats.totalBookings}</li>
+        </ul>
+      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { createBatch } from '../services/batchService';
 import { createBatchAssignment } from '../services/batchAssignmentService';
 import { createGearItem } from '../services/gearService';
 import { completeBatch } from '../services/batchService';
+import { getOrgStats } from '../services/analyticsService';
 
 export default function OrgAdminDashboard() {
 
@@ -116,6 +117,21 @@ export default function OrgAdminDashboard() {
     }
   };
 
+  const [stats, setStats] = useState<any>(null);
+
+  const fetchStats = async () => {
+    try {
+      const response = await getOrgStats();
+      setStats(response.data.stats);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
   return (
     <div>
       <Navbar />
@@ -188,6 +204,16 @@ export default function OrgAdminDashboard() {
       <h2>Mark Batch Completed</h2>
       <input placeholder="Batch ID" value={completeBatchId} onChange={(e) => setCompleteBatchId(e.target.value)} />
       <button onClick={handleCompleteBatch}>Mark Completed</button>      
+
+      <h2>Organization Analytics</h2>
+      {stats && (
+        <ul>
+          <li>Total Trips: {stats.totalTrips}</li>
+          <li>Total Batches: {stats.totalBatches}</li>
+          <li>Total Bookings: {stats.totalBookings}</li>
+          <li>Confirmed Bookings: {stats.confirmedBookings}</li>
+        </ul>
+      )}
 
     </div>
   );
