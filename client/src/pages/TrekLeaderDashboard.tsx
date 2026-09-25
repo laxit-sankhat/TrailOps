@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import AttendanceScanner from '../components/AttendanceScanner';
 import { createCheckpoint } from '../services/checkpointService';
 import { triggerSOS, logIncident } from '../services/sosService';
+import { postTrekStatusUpdate, getTrekStatusHistory } from '../services/trekStatusService';
 
 export default function TrekLeaderDashboard() {
   const [checkpointForm, setCheckpointForm] = useState({ batchId: '', name: '', sequenceOrder: 1 });
@@ -60,6 +61,34 @@ export default function TrekLeaderDashboard() {
     }
   };
 
+  const [statusForm, setStatusForm] = useState({ batchId: '', milestone: '' });
+  const [statusMessage, setStatusMessage] = useState('');
+  const [statusHistory, setStatusHistory] = useState<any[]>([]);
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setStatusForm({ ...statusForm, [e.target.name]: e.target.value });
+  };
+
+  const handleStatusSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await postTrekStatusUpdate(statusForm);
+      setStatusMessage('Status update posted');
+      handleFetchHistory();
+    } catch (err: any) {
+      setStatusMessage(err.response?.data?.message || 'Something went wrong');
+    }
+  };
+
+  const handleFetchHistory = async () => {
+    try {
+      const response = await getTrekStatusHistory(statusForm.batchId);
+      setStatusHistory(response.data.updates);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div>
       <Navbar />
@@ -96,6 +125,21 @@ export default function TrekLeaderDashboard() {
         <button type="submit">Log Incident</button>
       </form>
       {incidentMessage && <p>{incidentMessage}</p>}
+
+      <h2>Post Trek Status Update</h2>
+      <form onSubmit={handleStatusSubmit}>
+        <input name="batchId" placeholder="Batch ID" onChange={handleStatusChange} />
+        <input name="milestone" placeholder="Milestone (e.g. Reached Base Camp)" onChange={handleStatusChange} />
+        <button type="submit">Post Update</button>
+      </form>
+      {statusMessage && <p>{statusMessage}</p>}
+
+      <h3>Status History</h3>
+      <ul>
+        {statusHistory.map((u) => (
+          <li key={u._id}>{u.milestone} — {new Date(u.timestamp).toLocaleString()}</li>
+        ))}
+      </ul>
     </div>
   );
 }

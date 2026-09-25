@@ -1,5 +1,6 @@
 import TrekStatusUpdate from '../models/TrekStatusUpdate.js';
 import BatchAssignment from '../models/BatchAssignment.js';
+import Batch from '../models/Batch.js';
 
 export const postTrekStatusUpdate = async (req, res) => {
   try {
@@ -15,12 +16,29 @@ export const postTrekStatusUpdate = async (req, res) => {
       return res.status(403).json({ success: false, message: 'You are not assigned as Trek Leader for this batch' });
     }
 
-    const update = await TrekStatusUpdate.create({
+    const batch = await Batch.findById(batchId);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: 'Batch not found' });
+    }
+
+    if (batch.status === 'Completed') {
+      return res.status(400).json({ success: false, message: 'Cannot post status updates for a completed batch' });
+    }
+
+    // Guard against accidental double-submit: same milestone text, same batch,
+    // within the last 30 seconds - genuine repeated confirmations further
+    // apart in time are still allowed.
+    const recentDuplicate = await TrekStatusUpdate.findOne({
       batchId,
       milestone,
-      updatedByUserId: req.user.userId
+      timestamp: { $gte: new Date(Date.now() - 30 * 1000) }
     });
 
+    if (recentDuplicate) {
+      return res.status(409).json({ success: false, message: 'This exact update was already posted moments ago' });
+    }
+
+    const update = await TrekStatusUpdate.create({ batchId, milestone, updatedByUserId: req.user.userId });
     res.status(201).json({ success: true, update });
   } catch (err) {
     console.error(err);

@@ -42,21 +42,21 @@ export const createBatchAssignment = async (req, res) => {
     const newBatch = batch; 
 
     for (const existing of existingAssignment) {
-      const extingBatch = await Batch.findById(existing.batchId);
+      const existingBatch = await Batch.findById(existing.batchId);
 
-      if(!extingBatch) continue;
+      if (!existingBatch) continue;
+
+      const overlaps = newBatch.startDate <= existingBatch.endDate && existingBatch.startDate <= newBatch.endDate;
 
       // Standard interval-overlap check: two date ranges overlap if each one's
       // start is before or on the other's end. Prevents assigning the same Trek
       // Leader/Volunteer to two batches happening at overlapping times.
-      const overlaps = newBatch.startDate <= existingBatch.endDate && existingBatch.startDate <= newBatch.endDate;
-
-      if(overlaps)
+      if (overlaps)
         return res.status(409).json({
-          sucess: false,
+          success: false,
           message: `This user is already assigned to another batch (${existingBatch.batchName}) with overlapping dates`
         });
-    }  
+    }
       
     const assignment = await BatchAssignment.create({
       batchId,
