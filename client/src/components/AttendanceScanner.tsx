@@ -36,9 +36,16 @@ export default function AttendanceScanner() {
 
   return (
     <div>
-      <input placeholder="Checkpoint ID" value={checkpointId} onChange={(e) => setCheckpointId(e.target.value)} />
-      <div id="qr-reader" style={{ width: '300px' }}></div>
-      {message && <p>{message}</p>}
+      <div className="form-group" style={{ maxWidth: '320px', marginBottom: '1rem' }}>
+        <label>Checkpoint ID</label>
+        <input placeholder="Enter Checkpoint ID" value={checkpointId} onChange={(e) => setCheckpointId(e.target.value)} />
+      </div>
+      <div id="qr-reader" style={{ width: '100%', maxWidth: '320px', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}></div>
+      {message && (
+        <p className={message.includes('successfully') ? 'alert alert-success' : 'alert alert-error'}>
+          {message}
+        </p>
+      )}
     </div>
   );
 }

@@ -42,6 +42,26 @@ export const markAttendanceManual = async (req, res) => {
         if(!assignment)
             return res.status(403).json({ success: false, message: 'You are not assigned to this batch' });
 
+        const batch = await Batch.findById(batchId);
+        if (!batch) {
+          return res.status(404).json({ success: false, message: 'Batch not found' });
+        }
+
+        if (batch.status === 'Completed') {
+          return res.status(400).json({ success: false, message: 'Cannot mark attendance for a completed batch' });
+        }
+
+        const now = new Date();
+        if (now < batch.startDate) {
+          return res.status(400).json({ success: false, message: 'This trek has not started yet' });
+        }
+
+        // For markAttendanceManual specifically (QR version already checks booking status via the booking lookup):
+        const booking = await Booking.findOne({ participantId, batchId, status: 'Confirmed' });
+        if (!booking) {
+          return res.status(400).json({ success: false, message: 'This participant does not have a confirmed booking for this batch' });
+        }
+
         const markedByUserId = req.user.userId;
 
         const attendance = await Attendance.create({ participantId, checkpointId, batchId, markedByUserId });
@@ -58,7 +78,27 @@ export const markAttendanceByQR = async (req, res) => {
   try {
     const { qrCodeValue, checkpointId } = req.body;
 
-    const booking = await Booking.findById(qrCodeValue);
+    const batch = await Batch.findById(batchId);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: 'Batch not found' });
+    }
+
+    if (batch.status === 'Completed') {
+      return res.status(400).json({ success: false, message: 'Cannot mark attendance for a completed batch' });
+    }
+
+    const now = new Date();
+    if (now < batch.startDate) {
+      return res.status(400).json({ success: false, message: 'This trek has not started yet' });
+    }
+
+    // For markAttendanceManual specifically (QR version already checks booking status via the booking lookup):
+    const booking = await Booking.findOne({ participantId, batchId, status: 'Confirmed' });
+    if (!booking) {
+      return res.status(400).json({ success: false, message: 'This participant does not have a confirmed booking for this batch' });
+    }
+
+    booking = await Booking.findById(qrCodeValue);
 
     if (!booking) {
       return res.status(404).json({ success: false, message: 'Invalid QR code - booking not found' });

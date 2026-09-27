@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
-import { getTripsByOrg, getAllPublicTrips } from '../services/tripService';
+import { getAllPublicTrips } from '../services/tripService';
 import { createBooking, submitForMedicalReview } from '../services/bookingService';
 import { uploadMedicalProfile } from '../services/medicalService';
 import { getBookingQR } from '../services/bookingService';
 import { submitFeedback } from '../services/feedbackService';
+import { createBookingGroup, joinBookingGroup, submitBookingGroup } from '../services/bookingGroupService';
 
 export default function ParticipantDashboard() {
   const { user } = useAuth();
@@ -96,54 +97,254 @@ export default function ParticipantDashboard() {
       }
     };
 
+    // Group Booking state & handlers
+    const [groupBatchId, setGroupBatchId] = useState('');
+    const [createdGroupCode, setCreatedGroupCode] = useState('');
+    const [createGroupMessage, setCreateGroupMessage] = useState('');
+
+    const [joinGroupCode, setJoinGroupCode] = useState('');
+    const [joinGroupMessage, setJoinGroupMessage] = useState('');
+
+    const [submitGroupId, setSubmitGroupId] = useState('');
+    const [submitGroupMessage, setSubmitGroupMessage] = useState('');
+
+    const handleCreateGroup = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        const response = await createBookingGroup(groupBatchId);
+        setCreatedGroupCode(response.data.group.groupCode);
+        setCreateGroupMessage(`Group created successfully! Group Code: ${response.data.group.groupCode}`);
+      } catch (err: any) {
+        setCreateGroupMessage(err.response?.data?.message || 'Something went wrong');
+      }
+    };
+
+    const handleJoinGroup = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        const response = await joinBookingGroup(joinGroupCode);
+        setJoinGroupMessage(`Joined group successfully! Booking status: ${response.data.booking.status}`);
+      } catch (err: any) {
+        setJoinGroupMessage(err.response?.data?.message || 'Something went wrong');
+      }
+    };
+
+    const handleSubmitGroup = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        const response = await submitBookingGroup(submitGroupId);
+        setSubmitGroupMessage(`${response.data.message} (Group size: ${response.data.groupSize})`);
+      } catch (err: any) {
+        setSubmitGroupMessage(err.response?.data?.message || 'Something went wrong');
+      }
+    };
+
   return (
     <div>
       <Navbar />
-      <h1>Participant Dashboard — {user?.fullName}</h1>
+      <div className="dashboard-container">
+        <h1>Participant Dashboard — {user?.fullName}</h1>
 
-      <h2>Available Trips</h2>
-      <ul>
-        {trips.map((trip) => (
-          <li key={trip._id}>{trip.name} — {trip.location}</li>
-        ))}
-      </ul>
+        <div className="card">
+          <h2>Available Trips</h2>
+          {trips.length > 0 ? (
+            <ul className="item-list">
+              {trips.map((trip) => (
+                <li key={trip._id}>
+                  <div>
+                    <strong>{trip.name}</strong>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Location: {trip.location}</div>
+                  </div>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>ID: {trip._id}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ color: 'var(--text-muted)' }}>No public trips available at this time.</p>
+          )}
+        </div>
 
-      <h2>Book a Batch</h2>
-      <input placeholder="Batch ID" value={batchId} onChange={(e) => setBatchId(e.target.value)} />
-      <button onClick={handleBook}>Book</button>
-      {message && <p>{message}</p>}
+        <div className="card">
+          <h2>Book a Batch</h2>
+          <div className="form-inline">
+            <div className="form-group" style={{ flex: '1 1 250px' }}>
+              <label>Batch ID</label>
+              <input placeholder="Enter Batch ID" value={batchId} onChange={(e) => setBatchId(e.target.value)} />
+            </div>
+            <button onClick={handleBook} className="btn">Book Batch</button>
+          </div>
+          {message && (
+            <p className={message.includes('created') ? 'alert alert-success' : 'alert alert-error'}>
+              {message}
+            </p>
+          )}
+        </div>
 
-    <h2>Upload Medical Profile</h2>
-    <form onSubmit={handleMedicalSubmit}>
-        <input name="bloodGroup" placeholder="Blood Group" onChange={handleMedicalChange} />
-        <input name="allergies" placeholder="Allergies" onChange={handleMedicalChange} />
-        <input name="medicalConditions" placeholder="Medical Conditions" onChange={handleMedicalChange} />
-        <input name="medications" placeholder="Medications" onChange={handleMedicalChange} />
-        <input name="emergencyContactDetails" placeholder="Emergency Contact" onChange={handleMedicalChange} />
-        <input name="validUntil" type="date" onChange={handleMedicalChange} />
-    <button type="submit">Upload Profile</button>
-    </form>
+        <div className="card">
+          <h2>Group Bookings</h2>
 
-    <h2>Submit Booking for Review</h2>
-    <input placeholder="Booking ID" value={bookingId} onChange={(e) => setBookingId(e.target.value)} />
-    <button onClick={handleSubmitReview}>Submit for Review</button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ padding: '1rem', background: 'var(--bg-body)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+              <h3>Create a Group</h3>
+              <form onSubmit={handleCreateGroup}>
+                <div className="form-group">
+                  <label>Batch ID</label>
+                  <input
+                    placeholder="Enter Batch ID"
+                    value={groupBatchId}
+                    onChange={(e) => setGroupBatchId(e.target.value)}
+                    required
+                  />
+                </div>
+                <button type="submit" className="btn">Create Group</button>
+              </form>
+              {createdGroupCode && (
+                <div className="group-code-display">
+                  <strong>Group Code (share with friends):</strong> {createdGroupCode}
+                </div>
+              )}
+              {createGroupMessage && (
+                <p className={createGroupMessage.includes('successfully') ? 'alert alert-success' : 'alert alert-error'}>
+                  {createGroupMessage}
+                </p>
+              )}
+            </div>
 
-    <h2>Get My QR Code</h2>
-    <button onClick={handleGetQR}>Get QR</button>
-    {qrImage && <img src={qrImage} alt="Booking QR Code" style={{ width: '200px' }} />}
+            <div style={{ padding: '1rem', background: 'var(--bg-body)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+              <h3>Join a Group</h3>
+              <form onSubmit={handleJoinGroup}>
+                <div className="form-group">
+                  <label>Group Code</label>
+                  <input
+                    placeholder="Enter Group Code"
+                    value={joinGroupCode}
+                    onChange={(e) => setJoinGroupCode(e.target.value)}
+                    required
+                  />
+                </div>
+                <button type="submit" className="btn">Join Group</button>
+              </form>
+              {joinGroupMessage && (
+                <p className={joinGroupMessage.includes('successfully') ? 'alert alert-success' : 'alert alert-error'}>
+                  {joinGroupMessage}
+                </p>
+              )}
+            </div>
 
-    <h2>Submit Feedback</h2>
-    <form onSubmit={handleFeedbackSubmit}>
-      <input name="bookingId" placeholder="Booking ID" onChange={handleFeedbackChange} />
-      <label>Guide Rating (1-5): <input name="ratingGuide" type="number" min="1" max="5" onChange={handleFeedbackChange} /></label>
-      <label>Food Rating (1-5): <input name="ratingFood" type="number" min="1" max="5" onChange={handleFeedbackChange} /></label>
-      <label>Safety Rating (1-5): <input name="ratingSafety" type="number" min="1" max="5" onChange={handleFeedbackChange} /></label>
-      <label>Overall Rating (1-5): <input name="ratingOverall" type="number" min="1" max="5" onChange={handleFeedbackChange} /></label>
-      <textarea name="comments" placeholder="Comments" onChange={handleFeedbackChange} />
-      <button type="submit">Submit Feedback</button>
-    </form>
-    {feedbackMessage && <p>{feedbackMessage}</p>}
+            <div style={{ padding: '1rem', background: 'var(--bg-body)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+              <h3>Submit a Group</h3>
+              <form onSubmit={handleSubmitGroup}>
+                <div className="form-group">
+                  <label>Group ID</label>
+                  <input
+                    placeholder="Enter Group ID"
+                    value={submitGroupId}
+                    onChange={(e) => setSubmitGroupId(e.target.value)}
+                    required
+                  />
+                </div>
+                <button type="submit" className="btn">Submit Group</button>
+              </form>
+              {submitGroupMessage && (
+                <p className={submitGroupMessage.includes('pipeline') || submitGroupMessage.includes('together') ? 'alert alert-success' : 'alert alert-error'}>
+                  {submitGroupMessage}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
 
+        <div className="card">
+          <h2>Upload Medical Profile</h2>
+          <form onSubmit={handleMedicalSubmit}>
+            <div className="form-group">
+              <label>Blood Group</label>
+              <input name="bloodGroup" placeholder="e.g. O+, A-, B+" onChange={handleMedicalChange} required />
+            </div>
+            <div className="form-group">
+              <label>Allergies</label>
+              <input name="allergies" placeholder="e.g. Peanuts, Dust, None" onChange={handleMedicalChange} />
+            </div>
+            <div className="form-group">
+              <label>Medical Conditions</label>
+              <input name="medicalConditions" placeholder="e.g. Asthma, Hypertension, None" onChange={handleMedicalChange} />
+            </div>
+            <div className="form-group">
+              <label>Medications</label>
+              <input name="medications" placeholder="e.g. Inhaler, None" onChange={handleMedicalChange} />
+            </div>
+            <div className="form-group">
+              <label>Emergency Contact Details</label>
+              <input name="emergencyContactDetails" placeholder="Name & Phone Number" onChange={handleMedicalChange} required />
+            </div>
+            <div className="form-group">
+              <label>Valid Until</label>
+              <input name="validUntil" type="date" onChange={handleMedicalChange} required />
+            </div>
+            <button type="submit" className="btn">Upload Medical Profile</button>
+          </form>
+        </div>
+
+        <div className="card">
+          <h2>Submit Booking for Review</h2>
+          <div className="form-inline">
+            <div className="form-group" style={{ flex: '1 1 250px' }}>
+              <label>Booking ID</label>
+              <input placeholder="Enter Booking ID" value={bookingId} onChange={(e) => setBookingId(e.target.value)} />
+            </div>
+            <button onClick={handleSubmitReview} className="btn">Submit for Review</button>
+          </div>
+        </div>
+
+        <div className="card">
+          <h2>Get My QR Code</h2>
+          <div className="form-inline">
+            <button onClick={handleGetQR} className="btn">Generate / View QR</button>
+          </div>
+          {qrImage && (
+            <div className="qr-image-container">
+              <img src={qrImage} alt="Booking QR Code" style={{ width: '200px', display: 'block' }} />
+            </div>
+          )}
+        </div>
+
+        <div className="card">
+          <h2>Submit Feedback</h2>
+          <form onSubmit={handleFeedbackSubmit}>
+            <div className="form-group">
+              <label>Booking ID</label>
+              <input name="bookingId" placeholder="Enter Booking ID" onChange={handleFeedbackChange} required />
+            </div>
+            <div className="form-group">
+              <label>Guide Rating (1-5)</label>
+              <input name="ratingGuide" type="number" min="1" max="5" defaultValue={5} onChange={handleFeedbackChange} required />
+            </div>
+            <div className="form-group">
+              <label>Food Rating (1-5)</label>
+              <input name="ratingFood" type="number" min="1" max="5" defaultValue={5} onChange={handleFeedbackChange} required />
+            </div>
+            <div className="form-group">
+              <label>Safety Rating (1-5)</label>
+              <input name="ratingSafety" type="number" min="1" max="5" defaultValue={5} onChange={handleFeedbackChange} required />
+            </div>
+            <div className="form-group">
+              <label>Overall Rating (1-5)</label>
+              <input name="ratingOverall" type="number" min="1" max="5" defaultValue={5} onChange={handleFeedbackChange} required />
+            </div>
+            <div className="form-group">
+              <label>Comments</label>
+              <textarea name="comments" placeholder="Share your experience..." onChange={handleFeedbackChange} />
+            </div>
+            <button type="submit" className="btn">Submit Feedback</button>
+          </form>
+          {feedbackMessage && (
+            <p className={feedbackMessage.includes('successfully') ? 'alert alert-success' : 'alert alert-error'}>
+              {feedbackMessage}
+            </p>
+          )}
+        </div>
+
+      </div>
     </div>
   );
 }

@@ -75,57 +75,112 @@ export default function TripCoordinatorDashboard() {
   return (
     <div>
       <Navbar />
-      <h1>Trip Coordinator Dashboard</h1>
+      <div className="dashboard-container">
+        <h1>Trip Coordinator Dashboard</h1>
 
-      <input placeholder="Batch ID" value={batchId} onChange={(e) => setBatchId(e.target.value)} />
-      <button onClick={handleFetch}>Load Bookings</button>
+        <div className="card">
+          <h2>Batch Bookings</h2>
+          <div className="form-inline">
+            <div className="form-group" style={{ flex: '1 1 250px' }}>
+              <label>Batch ID</label>
+              <input placeholder="Enter Batch ID" value={batchId} onChange={(e) => setBatchId(e.target.value)} />
+            </div>
+            <button onClick={handleFetch} className="btn">Load Bookings</button>
+          </div>
 
-      {message && <p>{message}</p>}
+          {message && (
+            <p className={message.includes('confirmed') ? 'alert alert-success' : 'alert alert-error'}>
+              {message}
+            </p>
+          )}
 
-      <ul>
-        {bookings.map((b) => (
-          <li key={b._id}>
-            {b.participantId?.fullName} — {b.status}
-            {b.status === 'MedicallyApproved' && (
-              <button onClick={() => handleConfirm(b._id)}>Confirm</button>
-            )}
-          </li>
-        ))}
-      </ul>
+          {bookings.length > 0 ? (
+            <ul className="item-list" style={{ marginTop: '1.25rem' }}>
+              {bookings.map((b) => (
+                <li key={b._id}>
+                  <div>
+                    <strong>{b.participantId?.fullName || 'Participant'}</strong>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Status: {b.status}</div>
+                  </div>
+                  {b.status === 'MedicallyApproved' && (
+                    <button onClick={() => handleConfirm(b._id)} className="btn btn-sm">Confirm Booking</button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ color: 'var(--text-muted)', marginTop: '1rem' }}>No bookings loaded yet.</p>
+          )}
+        </div>
 
-      <h2>Allocate Gear</h2>
-      <form onSubmit={handleAllocSubmit}>
-        <input name="gearItemId" placeholder="Gear Item ID" onChange={handleAllocChange} />
-        <input name="participantId" placeholder="Participant ID" onChange={handleAllocChange} />
-        <input name="batchId" placeholder="Batch ID" onChange={handleAllocChange} />
-        <input name="expectedReturnDate" type="date" onChange={handleAllocChange} />
-        <button type="submit">Allocate</button>
-      </form>
+        <div className="card">
+          <h2>Allocate Gear</h2>
+          <form onSubmit={handleAllocSubmit}>
+            <div className="form-group">
+              <label>Gear Item ID</label>
+              <input name="gearItemId" placeholder="Gear Item ID" onChange={handleAllocChange} required />
+            </div>
+            <div className="form-group">
+              <label>Participant ID</label>
+              <input name="participantId" placeholder="Participant ID" onChange={handleAllocChange} required />
+            </div>
+            <div className="form-group">
+              <label>Batch ID</label>
+              <input name="batchId" placeholder="Batch ID" onChange={handleAllocChange} required />
+            </div>
+            <div className="form-group">
+              <label>Expected Return Date</label>
+              <input name="expectedReturnDate" type="date" onChange={handleAllocChange} required />
+            </div>
+            <button type="submit" className="btn">Allocate Gear</button>
+          </form>
+        </div>
 
-      <h2>Return Gear</h2>
-      <form onSubmit={handleReturnSubmit}>
-        <input name="allocationId" placeholder="Allocation ID" onChange={handleReturnChange} />
-        <select name="conditionOnReturn" onChange={handleReturnChange}>
-          <option value="Good">Good</option>
-          <option value="Minor">Minor Damage</option>
-          <option value="Moderate">Moderate Damage</option>
-          <option value="Severe">Severe Damage</option>
-          <option value="Lost">Lost</option>
-        </select>
-        <button type="submit">Return Gear</button>
-      </form>
-      {gearMsg && <p>{gearMsg}</p>}
+        <div className="card">
+          <h2>Return Gear</h2>
+          <form onSubmit={handleReturnSubmit}>
+            <div className="form-group">
+              <label>Allocation ID</label>
+              <input name="allocationId" placeholder="Allocation ID" onChange={handleReturnChange} required />
+            </div>
+            <div className="form-group">
+              <label>Condition on Return</label>
+              <select name="conditionOnReturn" onChange={handleReturnChange}>
+                <option value="Good">Good</option>
+                <option value="Minor">Minor Damage</option>
+                <option value="Moderate">Moderate Damage</option>
+                <option value="Severe">Severe Damage</option>
+                <option value="Lost">Lost</option>
+              </select>
+            </div>
+            <button type="submit" className="btn">Return Gear</button>
+          </form>
+          {gearMsg && (
+            <p className={gearMsg.includes('successfully') || gearMsg.includes('returned') ? 'alert alert-success' : 'alert alert-error'}>
+              {gearMsg}
+            </p>
+          )}
+        </div>
 
-    <h2>Generate Certificate</h2>
-    <input placeholder="Booking ID" value={certBookingId} onChange={(e) => setCertBookingId(e.target.value)} />
-    <button onClick={handleGenerateCert}>Generate Certificate</button>
-    {certMessage && (
-      <p>
-        {certMessage.startsWith('Certificate generated') ? (
-          <>Certificate generated: <a href={certMessage.split(': ')[1]} target="_blank" rel="noopener noreferrer">View PDF</a></>
-        ) : certMessage}
-      </p>
-    )}
+        <div className="card">
+          <h2>Generate Certificate</h2>
+          <div className="form-inline">
+            <div className="form-group" style={{ flex: '1 1 250px' }}>
+              <label>Booking ID</label>
+              <input placeholder="Enter Booking ID" value={certBookingId} onChange={(e) => setCertBookingId(e.target.value)} />
+            </div>
+            <button onClick={handleGenerateCert} className="btn">Generate Certificate</button>
+          </div>
+          {certMessage && (
+            <p className={certMessage.includes('generated') ? 'alert alert-success' : 'alert alert-error'}>
+              {certMessage.startsWith('Certificate generated') ? (
+                <>Certificate generated: <a href={certMessage.split(': ')[1]} target="_blank" rel="noopener noreferrer">View PDF</a></>
+              ) : certMessage}
+            </p>
+          )}
+        </div>
+
+      </div>
     </div>
   );
 }

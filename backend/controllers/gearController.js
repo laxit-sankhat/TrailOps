@@ -1,5 +1,6 @@
 import GearItem from '../models/GearItem.js';
 import GearAllocation from '../models/GearAllocation.js';
+import Batch from '../models/Batch.js';
 
 export const createGearItem = async (req, res) => {
   try {
@@ -39,6 +40,15 @@ export const allocateGear = async (req, res) => {
 
     if (gearItem.organizationId.toString() !== req.user.organizationId) {
       return res.status(403).json({ success: false, message: 'This gear item does not belong to your organization' });
+    }
+
+    const batch = await Batch.findById(batchId);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: 'Batch not found' });
+    }
+
+    if (batch.status === 'Completed') {
+      return res.status(400).json({ success: false, message: 'Cannot allocate gear for a completed batch' });
     }
 
     const activeAllocations = await GearAllocation.countDocuments({

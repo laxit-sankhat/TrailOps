@@ -9,6 +9,8 @@ import TripCoordinatorDashboard from './pages/TripCoordinatorDashboard';
 import MedicalOfficerDashboard from './pages/MedicalOfficerDashboard';
 import VolunteerDashboard from './pages/VolunteerDashboard';
 import ParticipantDashboard from './pages/ParticipantDashboard';
+import Register from './pages/Register';
+import VerifyCertificate from './pages/VerifyCertificate';
 
 function App() {
   const { user, isLoading, logout } = useAuth();
@@ -18,7 +20,12 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/login' element={<Login/>} />
+
+        <Route path='/register' element={<Register />} />
+
+        <Route path='/verify-certificate' element={<VerifyCertificate />} />
+
+        <Route path='/login' element={<Login />} />
 
         <Route path='/dashboard'>
 
@@ -26,61 +33,61 @@ function App() {
             path='org-admin'
             element={
               <ProtectedRoute allowedRoles={['OrgAdmin']}>
-                <OrgAdminDashboard/>
+                <OrgAdminDashboard />
               </ProtectedRoute>
             }
           />
 
-          <Route 
+          <Route
             path='trek-leader'
             element={
               <ProtectedRoute allowedRoles={['TrekLeader']}>
-                <TrekLeaderDashboard/>
-              </ProtectedRoute>
-            }
-          />      
-
-          <Route 
-            path='super-admin'
-            element={
-              <ProtectedRoute allowedRoles={['SuperAdmin']}>
-                <SuperAdminDashboard/>
-              </ProtectedRoute>
-            }
-          /> 
-
-          <Route 
-            path='trip-coordinator'
-            element={
-              <ProtectedRoute allowedRoles={['TripCoordinator']}>
-                <TripCoordinatorDashboard/>
-              </ProtectedRoute>
-            }
-          /> 
-
-          <Route 
-            path='medical-officer'
-            element={
-              <ProtectedRoute allowedRoles={['MedicalOfficer']}>
-                <MedicalOfficerDashboard/>
-              </ProtectedRoute>
-            }
-          /> 
-
-          <Route 
-            path='volunteer'
-            element={
-              <ProtectedRoute allowedRoles={['Volunteer']}>
-                <VolunteerDashboard/>
+                <TrekLeaderDashboard />
               </ProtectedRoute>
             }
           />
-          
-          <Route 
+
+          <Route
+            path='super-admin'
+            element={
+              <ProtectedRoute allowedRoles={['SuperAdmin']}>
+                <SuperAdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='trip-coordinator'
+            element={
+              <ProtectedRoute allowedRoles={['TripCoordinator']}>
+                <TripCoordinatorDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='medical-officer'
+            element={
+              <ProtectedRoute allowedRoles={['MedicalOfficer']}>
+                <MedicalOfficerDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='volunteer'
+            element={
+              <ProtectedRoute allowedRoles={['Volunteer']}>
+                <VolunteerDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path='participant'
             element={
               <ProtectedRoute allowedRoles={['Participant']}>
-                <ParticipantDashboard/>
+                <ParticipantDashboard />
               </ProtectedRoute>
             }
           />

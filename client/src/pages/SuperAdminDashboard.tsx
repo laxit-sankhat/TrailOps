@@ -43,28 +43,71 @@ export default function SuperAdminDashboard() {
   return (
     <div>
       <Navbar />
-      <h1>Super Admin Dashboard</h1>
-      <h2>Create Organization</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="orgName" placeholder="Organization Name" onChange={handleChange} />
-        <input name="registrationDetails" placeholder="Registration Details" onChange={handleChange} />
-        <input name="contactEmail" placeholder="Contact Email" onChange={handleChange} />
-        <input name="address" placeholder="Address" onChange={handleChange} />
-        <input name="orgAdminName" placeholder="Org Admin Name" onChange={handleChange} />
-        <input name="orgAdminEmail" placeholder="Org Admin Email" onChange={handleChange} />
-        <input name="orgAdminPassword" type="password" placeholder="Org Admin Password" onChange={handleChange} />
-        <button type="submit">Create Organization</button>
-      </form>
-      {message && <p>{message}</p>}
+      <div className="dashboard-container">
+        <h1>Super Admin Dashboard</h1>
 
-      <h2>Platform Analytics</h2>
-      {platformStats && (
-        <ul>
-          <li>Total Organizations: {platformStats.totalOrganizations}</li>
-          <li>Total Trips: {platformStats.totalTrips}</li>
-          <li>Total Bookings: {platformStats.totalBookings}</li>
-        </ul>
-      )}
+        <div className="card">
+          <h2>Create Organization</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Organization Name</label>
+              <input name="orgName" placeholder="Organization Name" onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label>Registration Details</label>
+              <input name="registrationDetails" placeholder="Registration Details" onChange={handleChange} />
+            </div>
+            <div className="form-group">
+              <label>Contact Email</label>
+              <input name="contactEmail" type="email" placeholder="contact@org.com" onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label>Address</label>
+              <input name="address" placeholder="Address" onChange={handleChange} />
+            </div>
+            <div className="form-group">
+              <label>Org Admin Name</label>
+              <input name="orgAdminName" placeholder="Admin Full Name" onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label>Org Admin Email</label>
+              <input name="orgAdminEmail" type="email" placeholder="admin@org.com" onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label>Org Admin Password</label>
+              <input name="orgAdminPassword" type="password" placeholder="Password" onChange={handleChange} required />
+            </div>
+            <button type="submit" className="btn">Create Organization</button>
+          </form>
+          {message && (
+            <p className={message.includes('successfully') ? 'alert alert-success' : 'alert alert-error'}>
+              {message}
+            </p>
+          )}
+        </div>
+
+        <div className="card">
+          <h2>Platform Analytics</h2>
+          {platformStats ? (
+            <div className="stats-grid">
+              <div className="stat-box">
+                <div className="stat-label">Total Organizations</div>
+                <div className="stat-value">{platformStats.totalOrganizations}</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-label">Total Trips</div>
+                <div className="stat-value">{platformStats.totalTrips}</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-label">Total Bookings</div>
+                <div className="stat-value">{platformStats.totalBookings}</div>
+              </div>
+            </div>
+          ) : (
+            <p>Loading analytics...</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

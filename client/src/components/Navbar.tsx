@@ -4,9 +4,16 @@ export default function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', borderBottom: '1px solid #ccc' }}>
-      <span>TrailOps — {user?.role}</span>
-      <button onClick={() => logout()}>Log Out</button>
+    <nav className="navbar">
+      <div className="navbar-brand">
+        <span className="navbar-logo">🌲</span>
+        <span className="navbar-title">TrailOps</span>
+      </div>
+      <div className="navbar-user">
+        {user?.fullName && <span className="navbar-name">{user.fullName}</span>}
+        <span className="role-badge">{user?.role}</span>
+        <button className="btn-logout" onClick={() => logout()}>Log Out</button>
+      </div>
     </nav>
   );
 }
