@@ -4,6 +4,7 @@ const { Schema, model } = mongoose;
 const feedbackSchema = new Schema(
     {
         participantId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        bookingId: { type: Schema.Types.ObjectId, ref: 'Booking', required: true },
         tripId: { type: Schema.Types.ObjectId, ref: 'Trip', required: true },
         organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
         batchId: { type: Schema.Types.ObjectId, ref: 'Batch', required: true },
@@ -18,4 +19,3 @@ const feedbackSchema = new Schema(
 
 const Feedback = model('Feedback', feedbackSchema);
 export default Feedback;
-

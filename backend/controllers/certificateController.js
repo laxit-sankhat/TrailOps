@@ -8,10 +8,14 @@ import Trip from '../models/Trip.js';
 
 export const generateCertificate = async (req, res) => {
   try {
-    const { bookingId } = req.body;
+    const { bookingId, participantId } = req.body;
 
     const booking = await Booking.findById(bookingId).populate('participantId', 'fullName');
     if (!booking) return res.status(404).json({ success: false, message: 'Booking not found' });
+
+    if (participantId && booking.participantId._id.toString() !== participantId) {
+      return res.status(400).json({ success: false, message: 'Participant ID does not match this booking' });
+    }
 
     if (booking.organizationId.toString() !== req.user.organizationId) {
       return res.status(403).json({ success: false, message: 'This booking does not belong to your organization' });
@@ -19,6 +23,11 @@ export const generateCertificate = async (req, res) => {
 
     if (booking.status !== 'Confirmed') {
       return res.status(400).json({ success: false, message: 'Only confirmed bookings are eligible for a certificate' });
+    }
+
+    const existing = await Certificate.findOne({ bookingId: booking._id });
+    if (existing) {
+      return res.status(409).json({ success: false, message: 'A certificate has already been generated for this booking' });
     }
 
     const batch = await Batch.findById(booking.batchId);
@@ -65,6 +74,7 @@ export const generateCertificate = async (req, res) => {
     const certificate = await Certificate.create({
       participantId: booking.participantId._id,
       organizationId: booking.organizationId,
+      bookingId: booking._id,
       tripId: booking.tripId,
       batchId: booking.batchId,
       certificateCode,

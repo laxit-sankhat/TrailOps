@@ -5,6 +5,7 @@ const certificateSchema = new Schema(
     {
         participantId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
+        bookingId: { type: Schema.Types.ObjectId, ref: 'Booking', required: true },
         tripId: { type: Schema.Types.ObjectId, ref: 'Trip', required: true },
         batchId: { type: Schema.Types.ObjectId, ref: 'Batch', required: true },
         certificateCode: { type: String, unique: true },
@@ -15,4 +16,3 @@ const certificateSchema = new Schema(
 
 const Certificate = model('Certificate', certificateSchema);
 export default Certificate;
-

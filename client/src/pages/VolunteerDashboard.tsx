@@ -1,14 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import AttendanceScanner from '../components/AttendanceScanner';
 import { addVolunteerNote } from '../services/sosService';
 import { markAttendanceManual } from '../services/attendanceService';
+import { getMyBatchAssignments } from '../services/batchAssignmentService';
+import { getCheckpointsByBatch } from '../services/checkpointService';
+import type { BatchAssignmentSummary, CheckpointSummary } from '../types';
 
 export default function VolunteerDashboard() {
+  const [myBatches, setMyBatches] = useState<BatchAssignmentSummary[]>([]);
+  const [checkpoints, setCheckpoints] = useState<CheckpointSummary[]>([]);
   const [manualForm, setManualForm] = useState({ participantId: '', checkpointId: '', batchId: '' });
   const [manualMessage, setManualMessage] = useState('');
 
-  const handleManualChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    const loadAssignments = async () => {
+      try {
+        const response = await getMyBatchAssignments();
+        setMyBatches(response.data.assignments || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    loadAssignments();
+  }, []);
+
+  const handleBatchSelect = async (batchId: string) => {
+    setManualForm((previous) => ({ ...previous, batchId, checkpointId: '' }));
+    setCheckpoints([]);
+    if (!batchId) return;
+
+    try {
+      const response = await getCheckpointsByBatch(batchId);
+      setCheckpoints(response.data.checkpoints || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleManualChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setManualForm({ ...manualForm, [e.target.name]: e.target.value });
   };
 
@@ -58,12 +88,22 @@ export default function VolunteerDashboard() {
               <input name="participantId" placeholder="Participant ID" value={manualForm.participantId} onChange={handleManualChange} required />
             </div>
             <div className="form-group">
-              <label>Checkpoint ID</label>
-              <input name="checkpointId" placeholder="Checkpoint ID" value={manualForm.checkpointId} onChange={handleManualChange} required />
+              <label>Batch</label>
+              <select name="batchId" value={manualForm.batchId} onChange={(e) => handleBatchSelect(e.target.value)} required>
+                <option value="">Select a Batch</option>
+                {myBatches.map((assignment) => assignment.batchId && (
+                  <option key={assignment._id} value={assignment.batchId._id}>{assignment.batchId.batchName}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
-              <label>Batch ID</label>
-              <input name="batchId" placeholder="Batch ID" value={manualForm.batchId} onChange={handleManualChange} required />
+              <label>Checkpoint</label>
+              <select name="checkpointId" value={manualForm.checkpointId} onChange={handleManualChange} disabled={!manualForm.batchId} required>
+                <option value="">Select a Checkpoint</option>
+                {checkpoints.map((checkpoint) => (
+                  <option key={checkpoint._id} value={checkpoint._id}>{checkpoint.name}</option>
+                ))}
+              </select>
             </div>
             <button type="submit" className="btn">Mark Attendance (Manual)</button>
           </form>

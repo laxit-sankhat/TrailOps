@@ -88,6 +88,10 @@ export const returnGear = async (req, res) => {
       return res.status(403).json({ success: false, message: 'This gear allocation does not belong to your organization' });
     }
 
+    if (allocation.returnedAt) {
+      return res.status(400).json({ success: false, message: 'This gear has already been returned' });
+    }
+
     const now = new Date();
     let fineAmount = 0;
     let fineReason = 'None';
@@ -145,6 +149,19 @@ export const removeGearItem = async (req, res) => {
     await gearItem.save();
 
     res.status(200).json({ success: true, gearItem });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getMyOrgGear = async (req, res) => {
+  try {
+    const gearItems = await GearItem.find({
+      organizationId: req.user.organizationId,
+      availabilityStatus: 'Active'
+    });
+    res.status(200).json({ success: true, gearItems });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: err.message });

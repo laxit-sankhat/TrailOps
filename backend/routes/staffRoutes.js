@@ -1,8 +1,10 @@
 import express from 'express';
-import { createStaffMember, removeStaffMember } from '../controllers/staffController.js';
+import { createStaffMember, removeStaffMember, getMyOrgStaff } from '../controllers/staffController.js';
 import { verifyToken, restrictTo } from '../middleware/auth.js';
 
 const router = express.Router();
+
+router.get('/', verifyToken, restrictTo('OrgAdmin'), getMyOrgStaff);
 
 router.post('/', verifyToken, restrictTo('OrgAdmin'), createStaffMember);
 

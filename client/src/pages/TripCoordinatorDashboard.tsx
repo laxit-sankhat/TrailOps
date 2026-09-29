@@ -1,13 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { getParticipantsByBatch, confirmBooking } from '../services/bookingService';
 import { allocateGear, returnGear } from '../services/gearService';
 import { generateCertificate } from '../services/certificateService';
-
+import { getMyOrgBatches } from '../services/batchService';
+import type { BatchSummary } from '../types';
 export default function TripCoordinatorDashboard() {
   const [batchId, setBatchId] = useState('');
+  const [batches, setBatches] = useState<BatchSummary[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const response = await getMyOrgBatches();
+        setBatches(response.data.batches || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchBatches();
+  }, []);
 
   const handleFetch = async () => {
     try {
@@ -61,11 +75,12 @@ export default function TripCoordinatorDashboard() {
   };
 
   const [certBookingId, setCertBookingId] = useState('');
+  const [certParticipantId, setCertParticipantId] = useState('');
   const [certMessage, setCertMessage] = useState('');
 
   const handleGenerateCert = async () => {
     try {
-      const response = await generateCertificate(certBookingId);
+      const response = await generateCertificate(certBookingId, certParticipantId || undefined);
       setCertMessage(`Certificate generated: ${response.data.certificate.pdfUrl}`);
     } catch (err: any) {
       setCertMessage(err.response?.data?.message || 'Something went wrong');
@@ -82,10 +97,15 @@ export default function TripCoordinatorDashboard() {
           <h2>Batch Bookings</h2>
           <div className="form-inline">
             <div className="form-group" style={{ flex: '1 1 250px' }}>
-              <label>Batch ID</label>
-              <input placeholder="Enter Batch ID" value={batchId} onChange={(e) => setBatchId(e.target.value)} />
+              <label>Batch</label>
+              <select value={batchId} onChange={(e) => setBatchId(e.target.value)}>
+                <option value="">Select a Batch</option>
+                {batches.map((batch) => (
+                  <option key={batch._id} value={batch._id}>{batch.batchName}</option>
+                ))}
+              </select>
             </div>
-            <button onClick={handleFetch} className="btn">Load Bookings</button>
+            <button onClick={handleFetch} className="btn" disabled={!batchId}>Load Bookings</button>
           </div>
 
           {message && (
@@ -169,7 +189,11 @@ export default function TripCoordinatorDashboard() {
               <label>Booking ID</label>
               <input placeholder="Enter Booking ID" value={certBookingId} onChange={(e) => setCertBookingId(e.target.value)} />
             </div>
-            <button onClick={handleGenerateCert} className="btn">Generate Certificate</button>
+            <div className="form-group" style={{ flex: '1 1 250px' }}>
+              <label>Participant ID (optional safety check)</label>
+              <input placeholder="Enter Participant ID" value={certParticipantId} onChange={(e) => setCertParticipantId(e.target.value)} />
+            </div>
+            <button onClick={handleGenerateCert} className="btn" disabled={!certBookingId}>Generate Certificate</button>
           </div>
           {certMessage && (
             <p className={certMessage.includes('generated') ? 'alert alert-success' : 'alert alert-error'}>

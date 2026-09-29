@@ -210,6 +210,12 @@ form {
   color: var(--text-muted);
 }
 
+.field-error {
+  color: var(--error-text);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
 .form-inline {
   display: flex;
   flex-wrap: wrap;

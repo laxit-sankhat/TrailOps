@@ -2,6 +2,7 @@ import Checkpoint from '../models/Checkpoint.js';
 import Booking from '../models/Booking.js';
 import BatchAssignment from '../models/BatchAssignment.js';
 import Attendance from '../models/Attendance.js';
+import Batch from '../models/Batch.js';
 
 export const createCheckpoint = async (req, res) => {
     try{
@@ -126,6 +127,27 @@ export const markAttendanceByQR = async (req, res) => {
     });
 
     res.status(201).json({ success: true, attendance });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getCheckpointsByBatch = async (req, res) => {
+  try {
+    const assignment = await BatchAssignment.findOne({
+      batchId: req.params.batchId,
+      userId: req.user.userId,
+      roleInBatch: { $in: ['TrekLeader', 'Volunteer'] }
+    });
+
+    if (!assignment) {
+      return res.status(403).json({ success: false, message: 'You are not assigned to this batch' });
+    }
+
+    const checkpoints = await Checkpoint.find({ batchId: req.params.batchId })
+      .sort({ sequenceOrder: 1 });
+    res.status(200).json({ success: true, checkpoints });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: err.message });

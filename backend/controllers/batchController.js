@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Batch from '../models/Batch.js';
 import Trip from '../models/Trip.js';
 import OrganizationMembership from '../models/OrganizationMembership.js';
@@ -26,7 +27,8 @@ export const createBatch = async (req, res) => {
             const membership = await OrganizationMembership.findOne({
                 userId: trekLeaderId,
                 organizationId: req.user.organizationId,
-                role: 'TrekLeader'
+                role: 'TrekLeader',
+                status: 'Active'
             });
 
             if (!membership){
@@ -98,6 +100,28 @@ export const searchBatches = async (req, res) => {
     if (endDate) filter.endDate = { $lte: new Date(endDate) };
 
     const batches = await Batch.find(filter);
+    res.status(200).json({ success: true, count: batches.length, batches });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getBatchesByTripPublic = async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.tripId)) {
+      return res.status(400).json({ success: false, message: 'Invalid trip ID' });
+    }
+
+    const trip = await Trip.findOne({ _id: req.params.tripId, status: 'Active' });
+    if (!trip) {
+      return res.status(404).json({ success: false, message: 'Trip not found' });
+    }
+
+    const batches = await Batch.find({
+      tripId: trip._id,
+      status: { $ne: 'Completed' }
+    }).sort({ startDate: 1 });
     res.status(200).json({ success: true, count: batches.length, batches });
   } catch (err) {
     console.error(err);

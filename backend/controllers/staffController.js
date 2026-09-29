@@ -34,19 +34,9 @@ export const createStaffMember = async (req, res) => {
 
         await OrganizationMembership.create({
             userId: staffUser._id,
-            organizationId: req.user.organizationId, 
+            organizationId: req.user.organizationId,
             role
         });
-
-        // Volunteer does NOT get an OrganizationMembership - their org connection
-        // happens only through BatchAssignment, not org-level staff membership.
-        if (role !== 'Volunteer') {
-            await OrganizationMembership.create({
-                userId: staffUser._id,
-                organizationId: req.user.organizationId,
-                role
-            });
-        }
 
         res.status(201).json({
             success: true,
@@ -72,6 +62,24 @@ export const removeStaffMember = async (req, res) => {
     await membership.save();
 
     res.status(200).json({ success: true, message: 'Staff member deactivated' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getMyOrgStaff = async (req, res) => {
+  try {
+    const memberships = await OrganizationMembership.find({
+      organizationId: req.user.organizationId,
+      status: 'Active'
+    }).populate('userId', 'fullName email role');
+    const staff = Array.from(new Map(
+      memberships
+        .filter((membership) => membership.userId)
+        .map((membership) => [membership.userId._id.toString(), membership])
+    ).values());
+    res.status(200).json({ success: true, staff });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: err.message });

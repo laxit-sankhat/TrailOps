@@ -21,11 +21,16 @@ export const createBatchAssignment = async (req, res) => {
       return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
     }
 
+    if (batch.status === 'Completed') {
+      return res.status(400).json({ success: false, message: 'Cannot assign staff to a completed batch' });
+    }
+
     if (roleInBatch === 'TrekLeader') {
       const membership = await OrganizationMembership.findOne({
         userId,
         organizationId: req.user.organizationId,
-        role: 'TrekLeader'
+        role: 'TrekLeader',
+        status: 'Active'
       });
 
       if (!membership) {
@@ -33,8 +38,31 @@ export const createBatchAssignment = async (req, res) => {
       }
     }
 
-    if (roleInBatch === 'Volunteer' && !supervisingTrekLeaderId) {
-      return res.status(400).json({ success: false, message: 'supervisingTrekLeaderId is required when assigning a Volunteer' });
+    if (roleInBatch === 'Volunteer') {
+      const membership = await OrganizationMembership.findOne({
+        userId,
+        organizationId: req.user.organizationId,
+        role: 'Volunteer',
+        status: 'Active'
+      });
+
+      if (!membership) {
+        return res.status(400).json({ success: false, message: 'This user is not a Volunteer in your organization' });
+      }
+    }
+
+    if (roleInBatch === 'Volunteer') {
+      if (!supervisingTrekLeaderId) {
+        return res.status(400).json({ success: false, message: 'supervisingTrekLeaderId is required when assigning a Volunteer' });
+      }
+      const supervisorAssignment = await BatchAssignment.findOne({
+        batchId,
+        userId: supervisingTrekLeaderId,
+        roleInBatch: 'TrekLeader'
+      });
+      if (!supervisorAssignment) {
+        return res.status(400).json({ success: false, message: 'supervisingTrekLeaderId must be a Trek Leader already assigned to this batch' });
+      }
     }
 
     const existingAssignment = await BatchAssignment.find({ userId });
@@ -84,6 +112,17 @@ export const removeBatchAssignment = async (req, res) => {
 
     await BatchAssignment.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: 'Assignment removed' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getMyBatchAssignments = async (req, res) => {
+  try {
+    const assignments = await BatchAssignment.find({ userId: req.user.userId })
+      .populate('batchId', 'batchName startDate endDate status');
+    res.status(200).json({ success: true, assignments });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: err.message });

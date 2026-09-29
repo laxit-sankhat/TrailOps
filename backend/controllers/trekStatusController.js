@@ -1,6 +1,7 @@
 import TrekStatusUpdate from '../models/TrekStatusUpdate.js';
 import BatchAssignment from '../models/BatchAssignment.js';
 import Batch from '../models/Batch.js';
+import Booking from '../models/Booking.js';
 
 export const postTrekStatusUpdate = async (req, res) => {
   try {
@@ -48,16 +49,23 @@ export const postTrekStatusUpdate = async (req, res) => {
 
 export const getTrekStatusHistory = async (req, res) => {
   try {
-    const batch = await Batch.findById(req.params.batchId);
+    const { batchId } = req.params;
+    const batch = await Batch.findById(batchId);
     if (!batch) return res.status(404).json({ success: false, message: 'Batch not found' });
 
+    if (req.user.role === 'Participant') {
+      const hasBooking = await Booking.findOne({ batchId, participantId: req.user.userId });
+      if (!hasBooking) {
+        return res.status(403).json({ success: false, message: 'You do not have a booking for this batch' });
+      }
+    }
     // Add real scoping - e.g. Participant must have an actual booking in this batch,
     // staff must belong to the batch's org. For now, minimum fix: block cross-org access.
-    if (req.user.role !== 'SuperAdmin' && batch.organizationId?.toString() !== req.user.organizationId) {
+    else if (req.user.role !== 'SuperAdmin' && batch.organizationId?.toString() !== req.user.organizationId) {
       return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
     }
 
-    const updates = await TrekStatusUpdate.find({ batchId: req.params.batchId }).sort({ timestamp: 1 });
+    const updates = await TrekStatusUpdate.find({ batchId }).sort({ timestamp: 1 });
     res.status(200).json({ success: true, updates });
   } catch (err) {
     console.error(err);

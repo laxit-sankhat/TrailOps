@@ -1,16 +1,52 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import AttendanceScanner from '../components/AttendanceScanner';
-import { createCheckpoint } from '../services/checkpointService';
+import { createCheckpoint, getCheckpointsByBatch } from '../services/checkpointService';
 import { triggerSOS, logIncident } from '../services/sosService';
 import { postTrekStatusUpdate, getTrekStatusHistory } from '../services/trekStatusService';
 import { markAttendanceManual } from '../services/attendanceService';
+import { getMyBatchAssignments } from '../services/batchAssignmentService';
+import type { BatchAssignmentSummary, CheckpointSummary } from '../types';
 
 export default function TrekLeaderDashboard() {
+  const [myBatches, setMyBatches] = useState<BatchAssignmentSummary[]>([]);
+  const [checkpoints, setCheckpoints] = useState<CheckpointSummary[]>([]);
+  const [selectedBatchId, setSelectedBatchId] = useState('');
+  const [manualForm, setManualForm] = useState({ participantId: '', checkpointId: '', batchId: '' });
+  const [manualMessage, setManualMessage] = useState('');
+
+  useEffect(() => {
+    const loadAssignments = async () => {
+      try {
+        const response = await getMyBatchAssignments();
+        setMyBatches(response.data.assignments || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    loadAssignments();
+  }, []);
+
+  const handleBatchSelect = async (batchId: string) => {
+    setSelectedBatchId(batchId);
+    setManualForm((previous) => ({ ...previous, batchId, checkpointId: '' }));
+    if (!batchId) {
+      setCheckpoints([]);
+      return;
+    }
+    try {
+      const response = await getCheckpointsByBatch(batchId);
+      setCheckpoints(response.data.checkpoints || []);
+    } catch (err) {
+      console.error(err);
+      setCheckpoints([]);
+    }
+  };
+
   const [checkpointForm, setCheckpointForm] = useState({ batchId: '', name: '', sequenceOrder: 1 });
   const [checkpointMessage, setCheckpointMessage] = useState('');
 
-  const handleCheckpointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCheckpointChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setCheckpointForm({ ...checkpointForm, [e.target.name]: e.target.value });
   };
 
@@ -19,15 +55,13 @@ export default function TrekLeaderDashboard() {
     try {
       await createCheckpoint(checkpointForm);
       setCheckpointMessage('Checkpoint created successfully');
+      await handleBatchSelect(checkpointForm.batchId);
     } catch (err: any) {
       setCheckpointMessage(err.response?.data?.message || 'Something went wrong');
     }
   };
 
-  const [manualForm, setManualForm] = useState({ participantId: '', checkpointId: '', batchId: '' });
-  const [manualMessage, setManualMessage] = useState('');
-
-  const handleManualChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleManualChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setManualForm({ ...manualForm, [e.target.name]: e.target.value });
   };
 
@@ -114,11 +148,44 @@ export default function TrekLeaderDashboard() {
         <h1>Trek Leader Dashboard</h1>
 
         <div className="card">
+          <h2>My Assigned Batches</h2>
+          <div className="form-group">
+            <label>Batch</label>
+            <select value={selectedBatchId} onChange={(e) => handleBatchSelect(e.target.value)}>
+              <option value="">Select a Batch</option>
+              {myBatches.map((assignment) => assignment.batchId && (
+                <option key={assignment._id} value={assignment.batchId._id}>
+                  {assignment.batchId.batchName}
+                </option>
+              ))}
+            </select>
+          </div>
+          {selectedBatchId && (
+            checkpoints.length > 0 ? (
+              <ul className="item-list">
+                {checkpoints.map((checkpoint) => (
+                  <li key={checkpoint._id}>
+                    <span>{checkpoint.sequenceOrder}. {checkpoint.name}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p style={{ color: 'var(--text-muted)' }}>No checkpoints have been created for this batch.</p>
+            )
+          )}
+        </div>
+
+        <div className="card">
           <h2>Create Checkpoint</h2>
           <form onSubmit={handleCheckpointSubmit}>
             <div className="form-group">
-              <label>Batch ID</label>
-              <input name="batchId" placeholder="Batch ID" onChange={handleCheckpointChange} required />
+              <label>Batch</label>
+              <select name="batchId" value={checkpointForm.batchId} onChange={handleCheckpointChange} required>
+                <option value="">Select a Batch</option>
+                {myBatches.map((assignment) => assignment.batchId && (
+                  <option key={assignment._id} value={assignment.batchId._id}>{assignment.batchId.batchName}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Checkpoint Name</label>
@@ -151,11 +218,29 @@ export default function TrekLeaderDashboard() {
             </div>
             <div className="form-group">
               <label>Checkpoint ID</label>
-              <input name="checkpointId" placeholder="Checkpoint ID" value={manualForm.checkpointId} onChange={handleManualChange} required />
+              <select name="checkpointId" value={manualForm.checkpointId} onChange={handleManualChange} disabled={!manualForm.batchId} required>
+                <option value="">Select a Checkpoint</option>
+                {checkpoints.map((checkpoint) => (
+                  <option key={checkpoint._id} value={checkpoint._id}>{checkpoint.name}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Batch ID</label>
-              <input name="batchId" placeholder="Batch ID" value={manualForm.batchId} onChange={handleManualChange} required />
+              <select
+                name="batchId"
+                value={manualForm.batchId}
+                onChange={(e) => {
+                  handleManualChange(e);
+                  handleBatchSelect(e.target.value);
+                }}
+                required
+              >
+                <option value="">Select a Batch</option>
+                {myBatches.map((assignment) => assignment.batchId && (
+                  <option key={assignment._id} value={assignment.batchId._id}>{assignment.batchId.batchName}</option>
+                ))}
+              </select>
             </div>
             <button type="submit" className="btn">Mark Attendance (Manual)</button>
           </form>

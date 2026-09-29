@@ -19,6 +19,11 @@ export const submitFeedback = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Feedback can only be submitted for confirmed bookings' });
     }
 
+    const existing = await Feedback.findOne({ bookingId });
+    if (existing) {
+      return res.status(409).json({ success: false, message: 'Feedback has already been submitted for this booking' });
+    }
+
     const batch = await Batch.findById(booking.batchId);
     if (batch.status !== 'Completed') {
       return res.status(400).json({ success: false, message: 'This trek has not been completed yet' });
@@ -26,6 +31,7 @@ export const submitFeedback = async (req, res) => {
 
     const feedback = await Feedback.create({
       participantId: req.user.userId,
+      bookingId,
       tripId: booking.tripId,
       organizationId: booking.organizationId,
       batchId: booking.batchId,

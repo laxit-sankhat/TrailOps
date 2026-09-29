@@ -1,40 +1,132 @@
 import { useState, useEffect } from 'react';
+import { isAxiosError } from 'axios';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { getAllPublicTrips } from '../services/tripService';
-import { createBooking, submitForMedicalReview } from '../services/bookingService';
+import { createBooking, submitForMedicalReview, getMyBookings, cancelBooking, getBookingQR } from '../services/bookingService';
 import { uploadMedicalProfile } from '../services/medicalService';
-import { getBookingQR } from '../services/bookingService';
+import { getBatchesByTrip } from '../services/batchService';
 import { submitFeedback } from '../services/feedbackService';
 import { createBookingGroup, joinBookingGroup, submitBookingGroup } from '../services/bookingGroupService';
+import type { BatchSummary, ParticipantBookingSummary } from '../types';
 
 export default function ParticipantDashboard() {
   const { user } = useAuth();
   const [trips, setTrips] = useState<any[]>([]);
   const [batchId, setBatchId] = useState('');
+  const [selectedTripId, setSelectedTripId] = useState('');
+  const [availableBatches, setAvailableBatches] = useState<BatchSummary[]>([]);
+  const [batchesError, setBatchesError] = useState('');
+  const [myBookings, setMyBookings] = useState<ParticipantBookingSummary[]>([]);
+  const [loadingBookings, setLoadingBookings] = useState(true);
+  const [bookingsError, setBookingsError] = useState('');
   const [message, setMessage] = useState('');
+
+  const fetchMyBookings = async () => {
+    setLoadingBookings(true);
+    try {
+      const response = await getMyBookings();
+      setMyBookings(response.data.bookings || []);
+      setBookingsError('');
+    } catch (err) {
+      console.error(err);
+      setBookingsError('Unable to load your bookings. Please try again later.');
+    } finally {
+      setLoadingBookings(false);
+    }
+  };
 
   // Note: since Participant is global, this currently only shows ONE org's
   // trips (hardcoded org ID for testing) - a real "browse across all NGOs"
   // view needs a new public trip-search endpoint, not yet built.
   useEffect(() => {
+    let active = true;
     const fetchTrips = async () => {
       try {
         const response = await getAllPublicTrips();
-        setTrips(response.data.trips);
+        if (active) setTrips(response.data.trips);
       } catch (err) {
         console.error(err);
       }
     };
     fetchTrips();
+    getMyBookings()
+      .then((response) => {
+        if (active) {
+          setMyBookings(response.data.bookings || []);
+          setBookingsError('');
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        if (active) setBookingsError('Unable to load your bookings. Please try again later.');
+      })
+      .finally(() => {
+        if (active) setLoadingBookings(false);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
+
+  const handleTripSelect = async (tripId: string) => {
+    setSelectedTripId(tripId);
+    setBatchId('');
+    setBatchesError('');
+    if (!tripId) {
+      setAvailableBatches([]);
+      return;
+    }
+    try {
+      const response = await getBatchesByTrip(tripId);
+      setAvailableBatches(response.data.batches || []);
+    } catch (err) {
+      console.error(err);
+      setAvailableBatches([]);
+      setBatchesError('Unable to load batches for this trip. Please try again.');
+    }
+  };
 
   const handleBook = async () => {
     try {
       const response = await createBooking({ batchId });
       setMessage(`Booking created - status: ${response.data.booking.status}`);
+      await fetchMyBookings();
     } catch (err: any) {
       setMessage(err.response?.data?.message || 'Something went wrong');
+    }
+  };
+
+  const handleCancelBooking = async (id: string) => {
+    try {
+      await cancelBooking(id);
+      setMessage('Booking cancelled successfully');
+      await fetchMyBookings();
+    } catch (err: unknown) {
+      const errorMessage = isAxiosError<{ message?: string }>(err) ? err.response?.data?.message : undefined;
+      setMessage(errorMessage || 'Failed to cancel booking');
+    }
+  };
+
+  const handleSubmitMedicalForBooking = async (id: string) => {
+    try {
+      const response = await submitForMedicalReview(id);
+      setMessage(`Booking submitted for medical review - status: ${response.data.booking.status}`);
+      await fetchMyBookings();
+    } catch (err: unknown) {
+      const errorMessage = isAxiosError<{ message?: string }>(err) ? err.response?.data?.message : undefined;
+      setMessage(errorMessage || 'Failed to submit for medical review');
+    }
+  };
+
+  const handleFetchQRForBooking = async (id: string) => {
+    try {
+      const response = await getBookingQR(id);
+      setQrImage(response.data.qrImage);
+      setMessage('QR Code loaded below');
+    } catch (err: unknown) {
+      const errorMessage = isAxiosError<{ message?: string }>(err) ? err.response?.data?.message : undefined;
+      setMessage(errorMessage || 'Failed to retrieve QR code');
     }
   };
 
@@ -42,10 +134,33 @@ export default function ParticipantDashboard() {
     bloodGroup: '', allergies: '', medicalConditions: '', medications: '',
     emergencyContactDetails: '', reportFileUrl: 'placeholder.pdf', validUntil: ''
     });
+    const [medicalValidationErrors, setMedicalValidationErrors] = useState<Record<string, string>>({});
     const [bookingId, setBookingId] = useState('');
 
     const handleMedicalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMedicalForm({ ...medicalForm, [e.target.name]: e.target.value });
+    };
+
+    const validateMedicalField = (field: string, formElement: HTMLFormElement) => {
+    const values = new FormData(formElement);
+    const value = String(values.get(field) || '');
+    if (['bloodGroup', 'emergencyContactDetails', 'validUntil'].includes(field) && !value.trim()) {
+        return 'This field is required.';
+    }
+    if (field === 'validUntil' && value) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (new Date(`${value}T00:00:00`) <= today) return 'Valid-until date must be in the future.';
+    }
+    return '';
+    };
+
+    const handleMedicalBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const field = e.currentTarget.name;
+    const formElement = e.currentTarget.form;
+    if (!formElement) return;
+    const error = validateMedicalField(field, formElement);
+    setMedicalValidationErrors((current) => ({ ...current, [field]: error }));
     };
 
     const handleMedicalSubmit = async (e: React.FormEvent) => {
@@ -58,10 +173,22 @@ export default function ParticipantDashboard() {
     }
     };
 
+    const handleValidatedMedicalSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fields = ['bloodGroup', 'emergencyContactDetails', 'validUntil'];
+    const nextErrors = Object.fromEntries(
+        fields.map((field) => [field, validateMedicalField(field, e.currentTarget)])
+    );
+    setMedicalValidationErrors(nextErrors);
+    if (Object.values(nextErrors).some(Boolean)) return;
+    handleMedicalSubmit(e);
+    };
+
     const handleSubmitReview = async () => {
     try {
         const response = await submitForMedicalReview(bookingId);
         setMessage(`Booking submitted - status: ${response.data.booking.status}`);
+        await fetchMyBookings();
     } catch (err: any) {
         setMessage(err.response?.data?.message || 'Something went wrong');
     }
@@ -166,17 +293,82 @@ export default function ParticipantDashboard() {
 
         <div className="card">
           <h2>Book a Batch</h2>
+          <div className="form-group" style={{ marginBottom: '1rem' }}>
+            <label>Select Trip</label>
+            <select value={selectedTripId} onChange={(e) => handleTripSelect(e.target.value)}>
+              <option value="">Select a Trip</option>
+              {trips.map((trip) => (
+                <option key={trip._id} value={trip._id}>
+                  {trip.name} ({trip.location})
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="form-inline">
             <div className="form-group" style={{ flex: '1 1 250px' }}>
-              <label>Batch ID</label>
-              <input placeholder="Enter Batch ID" value={batchId} onChange={(e) => setBatchId(e.target.value)} />
+              <label>Select Batch</label>
+              <select value={batchId} onChange={(e) => setBatchId(e.target.value)} disabled={!selectedTripId}>
+                <option value="">
+                    {selectedTripId ? (batchesError ? 'Could not load batches' : availableBatches.length > 0 ? 'Select a Batch' : 'No upcoming batches found') : 'Select a trip first'}
+                </option>
+                {availableBatches.map((batch) => (
+                  <option key={batch._id} value={batch._id}>
+                    {batch.batchName}
+                  </option>
+                ))}
+              </select>
             </div>
-            <button onClick={handleBook} className="btn">Book Batch</button>
+            <button onClick={handleBook} className="btn" disabled={!batchId}>Book Batch</button>
           </div>
+          {batchesError && <p className="alert alert-error">{batchesError}</p>}
           {message && (
-            <p className={message.includes('created') ? 'alert alert-success' : 'alert alert-error'}>
+            <p className={message.includes('created') || message.includes('successfully') || message.includes('submitted for medical review') || message.includes('QR Code loaded') ? 'alert alert-success' : 'alert alert-error'}>
               {message}
             </p>
+          )}
+        </div>
+
+        <div className="card">
+          <h2>My Bookings</h2>
+          {loadingBookings ? (
+            <p style={{ color: 'var(--text-muted)' }}>Loading your bookings...</p>
+          ) : bookingsError ? (
+            <p className="alert alert-error">{bookingsError}</p>
+          ) : myBookings.length > 0 ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginTop: '0.75rem' }}>
+              {myBookings.map((booking) => (
+                <div key={booking._id} style={{ background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                    <strong>{booking.tripId?.name || 'Trek'}</strong>
+                    <span className="role-badge" style={{ backgroundColor: 'var(--primary-accent)', color: '#fff' }}>{booking.status}</span>
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+                    <div><strong>Batch:</strong> {booking.batchId?.batchName || 'N/A'}</div>
+                    {booking.batchId?.startDate && booking.batchId.endDate && (
+                      <div>
+                        {new Date(booking.batchId.startDate).toLocaleDateString()} — {new Date(booking.batchId.endDate).toLocaleDateString()}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    {booking.status === 'Inquiry' && (
+                      <button onClick={() => handleSubmitMedicalForBooking(booking._id)} className="btn btn-sm">Submit Medical</button>
+                    )}
+                    {booking.status === 'Confirmed' && (
+                      <button onClick={() => handleFetchQRForBooking(booking._id)} className="btn btn-sm">Get QR Code</button>
+                    )}
+                    {booking.status === 'Confirmed' && (
+                      <button onClick={() => setFeedbackForm({ ...feedbackForm, bookingId: booking._id })} className="btn btn-sm btn-secondary">Give Feedback</button>
+                    )}
+                    {['Inquiry', 'PendingMedicalReview', 'MedicallyApproved', 'Confirmed'].includes(booking.status) && (
+                      <button onClick={() => handleCancelBooking(booking._id)} className="btn btn-sm btn-danger">Cancel</button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: 'var(--text-muted)' }}>You have no bookings yet.</p>
           )}
         </div>
 
@@ -256,10 +448,11 @@ export default function ParticipantDashboard() {
 
         <div className="card">
           <h2>Upload Medical Profile</h2>
-          <form onSubmit={handleMedicalSubmit}>
+          <form onSubmit={handleValidatedMedicalSubmit} noValidate>
             <div className="form-group">
               <label>Blood Group</label>
-              <input name="bloodGroup" placeholder="e.g. O+, A-, B+" onChange={handleMedicalChange} required />
+              <input name="bloodGroup" placeholder="e.g. O+, A-, B+" onChange={handleMedicalChange} onBlur={handleMedicalBlur} aria-invalid={Boolean(medicalValidationErrors.bloodGroup)} required />
+              {medicalValidationErrors.bloodGroup && <p className="field-error">{medicalValidationErrors.bloodGroup}</p>}
             </div>
             <div className="form-group">
               <label>Allergies</label>
@@ -275,11 +468,13 @@ export default function ParticipantDashboard() {
             </div>
             <div className="form-group">
               <label>Emergency Contact Details</label>
-              <input name="emergencyContactDetails" placeholder="Name & Phone Number" onChange={handleMedicalChange} required />
+              <input name="emergencyContactDetails" placeholder="Name & Phone Number" onChange={handleMedicalChange} onBlur={handleMedicalBlur} aria-invalid={Boolean(medicalValidationErrors.emergencyContactDetails)} required />
+              {medicalValidationErrors.emergencyContactDetails && <p className="field-error">{medicalValidationErrors.emergencyContactDetails}</p>}
             </div>
             <div className="form-group">
               <label>Valid Until</label>
-              <input name="validUntil" type="date" onChange={handleMedicalChange} required />
+              <input name="validUntil" type="date" onChange={handleMedicalChange} onBlur={handleMedicalBlur} aria-invalid={Boolean(medicalValidationErrors.validUntil)} required />
+              {medicalValidationErrors.validUntil && <p className="field-error">{medicalValidationErrors.validUntil}</p>}
             </div>
             <button type="submit" className="btn">Upload Medical Profile</button>
           </form>
@@ -313,7 +508,7 @@ export default function ParticipantDashboard() {
           <form onSubmit={handleFeedbackSubmit}>
             <div className="form-group">
               <label>Booking ID</label>
-              <input name="bookingId" placeholder="Enter Booking ID" onChange={handleFeedbackChange} required />
+              <input name="bookingId" placeholder="Enter Booking ID" value={feedbackForm.bookingId} onChange={handleFeedbackChange} required />
             </div>
             <div className="form-group">
               <label>Guide Rating (1-5)</label>

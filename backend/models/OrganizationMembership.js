@@ -7,7 +7,7 @@ const organizationMembershipSchema = new Schema(
         organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
         role: {
             type: String,
-            enum: ['OrgAdmin', 'TripCoordinator', 'MedicalOfficer', 'TrekLeader'],
+            enum: ['OrgAdmin', 'TripCoordinator', 'MedicalOfficer', 'TrekLeader', 'Volunteer'],
             required: true
         },
         status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' }

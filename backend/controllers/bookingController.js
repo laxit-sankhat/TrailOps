@@ -21,6 +21,20 @@ export const createBooking = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Batch not found' });
     }
 
+    if (batch.status === 'Completed') {
+      return res.status(400).json({ success: false, message: 'Cannot book a completed batch' });
+    }
+
+    const existingActiveBooking = await Booking.findOne({
+      participantId: req.user.userId,
+      batchId,
+      status: { $in: ACTIVE_STATUSES }
+    });
+
+    if (existingActiveBooking) {
+      return res.status(409).json({ success: false, message: 'You already have an active booking for this batch' });
+    }
+
     const trip = await Trip.findById(batch.tripId);
 
     // We count bookings in ANY active status (not just Confirmed), because a booking
@@ -54,6 +68,10 @@ export const cancelBooking = async (req, res) => {
 
     if (!booking) {
       return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    if (['Cancelled', 'Rejected'].includes(booking.status)) {
+      return res.status(400).json({ success: false, message: 'This booking is already cancelled or rejected' });
     }
 
     // booking.participantId is a real ObjectId from the DB; req.user.userId is a
@@ -219,6 +237,18 @@ export const getParticipantsByBatch = async (req, res) => {
       .populate('participantId', 'fullName email mobileNumber');
 
     res.status(200).json({ success: true, count: bookings.length, bookings });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getMyBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({ participantId: req.user.userId })
+      .populate('batchId', 'batchName startDate endDate')
+      .populate('tripId', 'name');
+    res.status(200).json({ success: true, bookings });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: err.message });
