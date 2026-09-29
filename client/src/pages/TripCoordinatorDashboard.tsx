@@ -1,15 +1,31 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { getParticipantsByBatch, confirmBooking } from '../services/bookingService';
-import { allocateGear, returnGear } from '../services/gearService';
+import { allocateGear, returnGear, getMyOrgGear, getMyOrgAllocations } from '../services/gearService';
 import { generateCertificate } from '../services/certificateService';
 import { getMyOrgBatches } from '../services/batchService';
 import type { BatchSummary } from '../types';
+
+type GearOption = { _id: string; name: string };
+type AllocationOption = {
+  _id: string;
+  gearItemId: { name: string } | null;
+  participantId: { fullName: string } | null;
+};
+type ParticipantOption = {
+  _id: string;
+  status: string;
+  participantId: { _id: string; fullName: string } | null;
+};
+
 export default function TripCoordinatorDashboard() {
   const [batchId, setBatchId] = useState('');
   const [batches, setBatches] = useState<BatchSummary[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
   const [message, setMessage] = useState('');
+  const [gearItems, setGearItems] = useState<GearOption[]>([]);
+  const [allocations, setAllocations] = useState<AllocationOption[]>([]);
+  const [allocationParticipants, setAllocationParticipants] = useState<ParticipantOption[]>([]);
 
   useEffect(() => {
     const fetchBatches = async () => {
@@ -21,6 +37,19 @@ export default function TripCoordinatorDashboard() {
       }
     };
     fetchBatches();
+    const fetchGearData = async () => {
+      try {
+        const [gearResponse, allocationResponse] = await Promise.all([
+          getMyOrgGear(),
+          getMyOrgAllocations()
+        ]);
+        setGearItems(gearResponse.data.gearItems || []);
+        setAllocations(allocationResponse.data.allocations || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchGearData();
   }, []);
 
   const handleFetch = async () => {
@@ -46,8 +75,20 @@ export default function TripCoordinatorDashboard() {
   const [returnForm, setReturnForm] = useState({ allocationId: '', conditionOnReturn: 'Good' });
   const [gearMsg, setGearMsg] = useState('');
 
-  const handleAllocChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAllocChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setAllocForm({ ...allocForm, [e.target.name]: e.target.value });
+  };
+
+  const handleAllocBatchSelect = async (batchId: string) => {
+    setAllocForm((current) => ({ ...current, batchId, participantId: '' }));
+    setAllocationParticipants([]);
+    if (!batchId) return;
+    try {
+      const response = await getParticipantsByBatch(batchId);
+      setAllocationParticipants(response.data.bookings || []);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleAllocSubmit = async (e: React.FormEvent) => {
@@ -69,6 +110,8 @@ export default function TripCoordinatorDashboard() {
     try {
       const response = await returnGear(returnForm.allocationId, { conditionOnReturn: returnForm.conditionOnReturn });
       setGearMsg(`Gear returned - fine: ${response.data.allocation.fineAmount}`);
+      const allocationsResponse = await getMyOrgAllocations();
+      setAllocations(allocationsResponse.data.allocations || []);
     } catch (err: any) {
       setGearMsg(err.response?.data?.message || 'Something went wrong');
     }
@@ -77,6 +120,26 @@ export default function TripCoordinatorDashboard() {
   const [certBookingId, setCertBookingId] = useState('');
   const [certParticipantId, setCertParticipantId] = useState('');
   const [certMessage, setCertMessage] = useState('');
+
+  const handleCertificateBatchSelect = async (selectedBatchId: string) => {
+    setBatchId(selectedBatchId);
+    setBookings([]);
+    setCertBookingId('');
+    setCertParticipantId('');
+    if (!selectedBatchId) return;
+    try {
+      const response = await getParticipantsByBatch(selectedBatchId);
+      setBookings(response.data.bookings || []);
+    } catch (err: any) {
+      setMessage(err.response?.data?.message || 'Unable to load bookings');
+    }
+  };
+
+  const handleCertificateBookingSelect = (bookingId: string) => {
+    setCertBookingId(bookingId);
+    const selectedBooking = bookings.find((booking) => booking._id === bookingId);
+    setCertParticipantId(selectedBooking?.participantId?._id || '');
+  };
 
   const handleGenerateCert = async () => {
     try {
@@ -137,16 +200,27 @@ export default function TripCoordinatorDashboard() {
           <h2>Allocate Gear</h2>
           <form onSubmit={handleAllocSubmit}>
             <div className="form-group">
-              <label>Gear Item ID</label>
-              <input name="gearItemId" placeholder="Gear Item ID" onChange={handleAllocChange} required />
+              <label>Gear Item</label>
+              <select name="gearItemId" value={allocForm.gearItemId} onChange={handleAllocChange} required>
+                <option value="">Select Gear</option>
+                {gearItems.map((item) => <option key={item._id} value={item._id}>{item.name}</option>)}
+              </select>
             </div>
             <div className="form-group">
-              <label>Participant ID</label>
-              <input name="participantId" placeholder="Participant ID" onChange={handleAllocChange} required />
+              <label>Batch</label>
+              <select name="batchId" value={allocForm.batchId} onChange={(e) => handleAllocBatchSelect(e.target.value)} required>
+                <option value="">Select a Batch</option>
+                {batches.map((batch) => <option key={batch._id} value={batch._id}>{batch.batchName}</option>)}
+              </select>
             </div>
             <div className="form-group">
-              <label>Batch ID</label>
-              <input name="batchId" placeholder="Batch ID" onChange={handleAllocChange} required />
+              <label>Participant</label>
+              <select name="participantId" value={allocForm.participantId} onChange={handleAllocChange} disabled={!allocForm.batchId} required>
+                <option value="">Select a Participant</option>
+                {allocationParticipants.filter((booking) => booking.status === 'Confirmed').map((booking) => (
+                  booking.participantId && <option key={booking._id} value={booking.participantId._id}>{booking.participantId.fullName}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Expected Return Date</label>
@@ -160,8 +234,15 @@ export default function TripCoordinatorDashboard() {
           <h2>Return Gear</h2>
           <form onSubmit={handleReturnSubmit}>
             <div className="form-group">
-              <label>Allocation ID</label>
-              <input name="allocationId" placeholder="Allocation ID" onChange={handleReturnChange} required />
+              <label>Gear Allocation</label>
+              <select name="allocationId" value={returnForm.allocationId} onChange={handleReturnChange} required>
+                <option value="">Select an Allocation</option>
+                {allocations.map((allocation) => (
+                  <option key={allocation._id} value={allocation._id}>
+                    {allocation.gearItemId?.name || 'Gear'} — {allocation.participantId?.fullName || 'Participant'}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Condition on Return</label>
@@ -186,12 +267,26 @@ export default function TripCoordinatorDashboard() {
           <h2>Generate Certificate</h2>
           <div className="form-inline">
             <div className="form-group" style={{ flex: '1 1 250px' }}>
-              <label>Booking ID</label>
-              <input placeholder="Enter Booking ID" value={certBookingId} onChange={(e) => setCertBookingId(e.target.value)} />
+              <label>Batch</label>
+              <select value={batchId} onChange={(e) => handleCertificateBatchSelect(e.target.value)}>
+                <option value="">Select a Batch</option>
+                {batches.map((batch) => <option key={batch._id} value={batch._id}>{batch.batchName}</option>)}
+              </select>
             </div>
             <div className="form-group" style={{ flex: '1 1 250px' }}>
-              <label>Participant ID (optional safety check)</label>
-              <input placeholder="Enter Participant ID" value={certParticipantId} onChange={(e) => setCertParticipantId(e.target.value)} />
+              <label>Confirmed Booking</label>
+              <select value={certBookingId} onChange={(e) => handleCertificateBookingSelect(e.target.value)} disabled={!batchId}>
+                <option value="">Select a Confirmed Booking</option>
+                {bookings.filter((booking) => booking.status === 'Confirmed').map((booking) => (
+                  <option key={booking._id} value={booking._id}>
+                    {booking.participantId?.fullName || 'Participant'} — {booking._id}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group" style={{ flex: '1 1 250px' }}>
+              <label>Participant ID (safety check)</label>
+              <input value={certParticipantId} readOnly aria-readonly="true" />
             </div>
             <button onClick={handleGenerateCert} className="btn" disabled={!certBookingId}>Generate Certificate</button>
           </div>

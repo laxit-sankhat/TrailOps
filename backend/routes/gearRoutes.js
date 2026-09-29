@@ -1,10 +1,12 @@
 import express from 'express';
 import { verifyToken, restrictTo } from '../middleware/auth.js';
-import { createGearItem, allocateGear, returnGear, removeGearItem, getMyOrgGear } from '../controllers/gearController.js';
+import { createGearItem, allocateGear, returnGear, removeGearItem, getMyOrgGear, getMyOrgAllocations } from '../controllers/gearController.js';
 
 const router = express.Router();
 
 router.get('/', verifyToken, restrictTo('OrgAdmin', 'TripCoordinator', 'TrekLeader', 'Volunteer'), getMyOrgGear);
+
+router.get('/allocations', verifyToken, restrictTo('OrgAdmin', 'TripCoordinator', 'TrekLeader', 'Volunteer'), getMyOrgAllocations);
 
 router.post('/', verifyToken, restrictTo('OrgAdmin'), createGearItem);
 

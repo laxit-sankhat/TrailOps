@@ -23,6 +23,7 @@ import trekStatusRoutes from './routes/trekStatusRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import bookingGroupRoutes from './routes/bookingGroupRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 
 const app = express();
   
@@ -57,6 +58,7 @@ app.use('/api/trek-status', trekStatusRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/booking-groups', bookingGroupRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Global error handler - always last
 app.use((err, req, res, next) => {

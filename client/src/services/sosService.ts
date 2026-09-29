@@ -1,6 +1,8 @@
 import api from '../api/axiosInstance';
 
 export const triggerSOS = (data: any) => api.post('/sos', data);
+export const getSOSAlertsForBatch = (batchId: string) => api.get(`/sos/batch/${batchId}`);
 export const logIncident = (data: any) => api.post('/incidents', data);
+export const getIncidentsForBatch = (batchId: string) => api.get(`/incidents/batch/${batchId}`);
 export const addVolunteerNote = (incidentId: string, notes: string) =>
   api.patch(`/incidents/${incidentId}/notes`, { volunteerNotes: notes });

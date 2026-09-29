@@ -5,12 +5,17 @@ import { useAuth } from '../context/AuthContext';
 import { createTrip, getTripsByOrg, uploadTripImage, removeTripImage } from '../services/tripService';
 import { createBatch, getMyOrgBatches, completeBatch } from '../services/batchService';
 import { createBatchAssignment } from '../services/batchAssignmentService';
+import { getAssignmentsForBatch } from '../services/batchAssignmentService';
 import { createGearItem, getMyOrgGear } from '../services/gearService';
 import { getMyOrgStaff } from '../services/staffService';
 import { getOrgStats } from '../services/analyticsService';
 import type { BatchSummary, GearItemSummary, OrganizationStaffSummary } from '../types';
 
 type FieldErrors = Record<string, string>;
+type TrekLeaderAssignment = {
+  _id: string;
+  userId: { _id: string; fullName: string } | null;
+};
 
 export default function OrgAdminDashboard() {
 
@@ -225,9 +230,22 @@ export default function OrgAdminDashboard() {
 
   const [assignForm, setAssignForm] = useState({ batchId: '', userId: '', roleInBatch: 'TrekLeader', supervisingTrekLeaderId: '' });
   const [assignMessage, setAssignMessage] = useState('');
+  const [supervisingTrekLeaders, setSupervisingTrekLeaders] = useState<TrekLeaderAssignment[]>([]);
 
   const handleAssignChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setAssignForm({ ...assignForm, [e.target.name]: e.target.value });
+  };
+
+  const handleAssignmentBatchChange = async (batchId: string) => {
+    setAssignForm((current) => ({ ...current, batchId, supervisingTrekLeaderId: '' }));
+    setSupervisingTrekLeaders([]);
+    if (!batchId) return;
+    try {
+      const response = await getAssignmentsForBatch(batchId, 'TrekLeader');
+      setSupervisingTrekLeaders(response.data.assignments || []);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleAssignSubmit = async (e: React.FormEvent) => {
@@ -495,7 +513,7 @@ export default function OrgAdminDashboard() {
           <form onSubmit={handleAssignSubmit}>
             <div className="form-group">
               <label>Batch</label>
-              <select name="batchId" value={assignForm.batchId} onChange={handleAssignChange} required>
+              <select name="batchId" value={assignForm.batchId} onChange={(e) => handleAssignmentBatchChange(e.target.value)} required>
                 <option value="">Select a Batch</option>
                 {batches.map((batch) => (
                   <option key={batch._id} value={batch._id}>{batch.batchName}</option>
@@ -526,8 +544,13 @@ export default function OrgAdminDashboard() {
               </select>
             </div>
             <div className="form-group">
-              <label>Supervising Trek Leader ID (Volunteer only)</label>
-              <input name="supervisingTrekLeaderId" placeholder="Supervising Trek Leader ID" onChange={handleAssignChange} />
+              <label>Supervising Trek Leader (Volunteer only)</label>
+              <select name="supervisingTrekLeaderId" value={assignForm.supervisingTrekLeaderId} onChange={handleAssignChange} disabled={!assignForm.batchId}>
+                <option value="">Select a Trek Leader</option>
+                {supervisingTrekLeaders.map((assignment) => assignment.userId && (
+                  <option key={assignment._id} value={assignment.userId._id}>{assignment.userId.fullName}</option>
+                ))}
+              </select>
             </div>
             <button type="submit" className="btn">Assign to Batch</button>
           </form>

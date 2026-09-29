@@ -1,6 +1,8 @@
 import MedicalProfile from '../models/MedicalProfile.js';
 import MedicalReview from '../models/MedicalReview.js';
 import Booking from '../models/Booking.js';
+import OrganizationMembership from '../models/OrganizationMembership.js';
+import Notification from '../models/Notification.js';
 
 export const uploadMedicalProfile = async (req, res) => {
   try {
@@ -56,6 +58,20 @@ export const reviewMedicalSubmission = async (req, res) => {
       const booking = await Booking.findById(review.bookingId);
       booking.status = 'MedicallyApproved';
       await booking.save();
+      try {
+        const coordinators = await OrganizationMembership.find({
+          organizationId: review.organizationId,
+          role: 'TripCoordinator'
+        });
+        await Promise.all(coordinators.map((membership) => Notification.create({
+          recipientUserId: membership.userId,
+          message: `Booking ${booking._id} is ready to confirm`,
+          relatedType: 'Booking',
+          relatedId: booking._id
+        })));
+      } catch (notificationError) {
+        console.error('Failed to create booking-ready notifications:', notificationError);
+      }
     } else if (status === 'Rejected') {
       const booking = await Booking.findById(review.bookingId);
       booking.status = 'Rejected';

@@ -6,11 +6,22 @@ import { triggerSOS, logIncident } from '../services/sosService';
 import { postTrekStatusUpdate, getTrekStatusHistory } from '../services/trekStatusService';
 import { markAttendanceManual } from '../services/attendanceService';
 import { getMyBatchAssignments } from '../services/batchAssignmentService';
+import { getParticipantsByBatch } from '../services/bookingService';
+import { getSOSAlertsForBatch } from '../services/sosService';
 import type { BatchAssignmentSummary, CheckpointSummary } from '../types';
+
+type ParticipantOption = {
+  _id: string;
+  status: string;
+  participantId: { _id: string; fullName: string } | null;
+};
+type SOSAlertOption = { _id: string; emergencyType?: string };
 
 export default function TrekLeaderDashboard() {
   const [myBatches, setMyBatches] = useState<BatchAssignmentSummary[]>([]);
   const [checkpoints, setCheckpoints] = useState<CheckpointSummary[]>([]);
+  const [batchParticipants, setBatchParticipants] = useState<ParticipantOption[]>([]);
+  const [sosAlerts, setSosAlerts] = useState<SOSAlertOption[]>([]);
   const [selectedBatchId, setSelectedBatchId] = useState('');
   const [manualForm, setManualForm] = useState({ participantId: '', checkpointId: '', batchId: '' });
   const [manualMessage, setManualMessage] = useState('');
@@ -32,14 +43,50 @@ export default function TrekLeaderDashboard() {
     setManualForm((previous) => ({ ...previous, batchId, checkpointId: '' }));
     if (!batchId) {
       setCheckpoints([]);
+      setBatchParticipants([]);
+      setSosAlerts([]);
       return;
     }
     try {
-      const response = await getCheckpointsByBatch(batchId);
-      setCheckpoints(response.data.checkpoints || []);
+      const [checkpointResponse, participantResponse, alertResponse] = await Promise.all([
+        getCheckpointsByBatch(batchId),
+        getParticipantsByBatch(batchId),
+        getSOSAlertsForBatch(batchId)
+      ]);
+      setCheckpoints(checkpointResponse.data.checkpoints || []);
+      setBatchParticipants(participantResponse.data.bookings || []);
+      setSosAlerts(alertResponse.data.alerts || []);
     } catch (err) {
       console.error(err);
       setCheckpoints([]);
+      setBatchParticipants([]);
+      setSosAlerts([]);
+    }
+  };
+
+  const handleIncidentBatchSelect = async (batchId: string) => {
+    setIncidentForm((previous) => ({
+      ...previous,
+      batchId,
+      sosAlertId: '',
+      affectedParticipantId: ''
+    }));
+    if (!batchId) {
+      setBatchParticipants([]);
+      setSosAlerts([]);
+      return;
+    }
+    try {
+      const [participantResponse, alertResponse] = await Promise.all([
+        getParticipantsByBatch(batchId),
+        getSOSAlertsForBatch(batchId)
+      ]);
+      setBatchParticipants(participantResponse.data.bookings || []);
+      setSosAlerts(alertResponse.data.alerts || []);
+    } catch (err) {
+      console.error(err);
+      setBatchParticipants([]);
+      setSosAlerts([]);
     }
   };
 
@@ -79,7 +126,7 @@ export default function TrekLeaderDashboard() {
   const [sosMessage, setSosMessage] = useState('');
   const [lastSosId, setLastSosId] = useState('');
 
-  const handleSosChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSosChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setSosForm({ ...sosForm, [e.target.name]: e.target.value });
   };
 
@@ -99,7 +146,7 @@ export default function TrekLeaderDashboard() {
   });
   const [incidentMessage, setIncidentMessage] = useState('');
 
-  const handleIncidentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleIncidentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setIncidentForm({ ...incidentForm, [e.target.name]: e.target.value });
   };
 
@@ -117,7 +164,7 @@ export default function TrekLeaderDashboard() {
   const [statusMessage, setStatusMessage] = useState('');
   const [statusHistory, setStatusHistory] = useState<any[]>([]);
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setStatusForm({ ...statusForm, [e.target.name]: e.target.value });
   };
 
@@ -206,7 +253,7 @@ export default function TrekLeaderDashboard() {
 
         <div className="card">
           <h2>Scan Attendance</h2>
-          <AttendanceScanner />
+          <AttendanceScanner assignments={myBatches} checkpoints={checkpoints} onBatchSelect={handleBatchSelect} />
         </div>
 
         <div className="card">
@@ -214,7 +261,12 @@ export default function TrekLeaderDashboard() {
           <form onSubmit={handleManualSubmit}>
             <div className="form-group">
               <label>Participant ID</label>
-              <input name="participantId" placeholder="Participant ID" value={manualForm.participantId} onChange={handleManualChange} required />
+              <select name="participantId" value={manualForm.participantId} onChange={handleManualChange} required>
+                <option value="">Select a Participant</option>
+                {batchParticipants.filter((booking) => booking.status === 'Confirmed' && booking.participantId).map((booking) => (
+                  <option key={booking._id} value={booking.participantId!._id}>{booking.participantId!.fullName}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Checkpoint ID</label>
@@ -256,7 +308,15 @@ export default function TrekLeaderDashboard() {
           <form onSubmit={handleSosSubmit}>
             <div className="form-group">
               <label>Batch ID</label>
-              <input name="batchId" placeholder="Batch ID" onChange={handleSosChange} required />
+              <select name="batchId" value={sosForm.batchId} onChange={async (e) => {
+                handleSosChange(e);
+                await handleBatchSelect(e.target.value);
+              }} required>
+                <option value="">Select a Batch</option>
+                {myBatches.map((assignment) => assignment.batchId && (
+                  <option key={assignment._id} value={assignment.batchId._id}>{assignment.batchId.batchName}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Emergency Type</label>
@@ -281,15 +341,30 @@ export default function TrekLeaderDashboard() {
           <form onSubmit={handleIncidentSubmit}>
             <div className="form-group">
               <label>SOS Alert ID (optional)</label>
-              <input name="sosAlertId" placeholder="SOS Alert ID (if related)" onChange={handleIncidentChange} />
+              <select name="sosAlertId" value={incidentForm.sosAlertId} onChange={handleIncidentChange} disabled={!incidentForm.batchId}>
+                <option value="">No related SOS alert</option>
+                {sosAlerts.map((alert) => (
+                  <option key={alert._id} value={alert._id}>{alert.emergencyType || 'SOS Alert'} — {alert._id}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Batch ID</label>
-              <input name="batchId" placeholder="Batch ID" onChange={handleIncidentChange} required />
+              <select name="batchId" value={incidentForm.batchId} onChange={(e) => handleIncidentBatchSelect(e.target.value)} required>
+                <option value="">Select a Batch</option>
+                {myBatches.map((assignment) => assignment.batchId && (
+                  <option key={assignment._id} value={assignment.batchId._id}>{assignment.batchId.batchName}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Affected Participant ID</label>
-              <input name="affectedParticipantId" placeholder="Affected Participant ID" onChange={handleIncidentChange} required />
+              <select name="affectedParticipantId" value={incidentForm.affectedParticipantId} onChange={handleIncidentChange} disabled={!incidentForm.batchId} required>
+                <option value="">Select a Participant</option>
+                {batchParticipants.filter((booking) => booking.participantId).map((booking) => (
+                  <option key={booking._id} value={booking.participantId!._id}>{booking.participantId!.fullName}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Incident Description</label>
@@ -313,7 +388,12 @@ export default function TrekLeaderDashboard() {
           <form onSubmit={handleStatusSubmit}>
             <div className="form-group">
               <label>Batch ID</label>
-              <input name="batchId" placeholder="Batch ID" onChange={handleStatusChange} required />
+              <select name="batchId" value={statusForm.batchId} onChange={handleStatusChange} required>
+                <option value="">Select a Batch</option>
+                {myBatches.map((assignment) => assignment.batchId && (
+                  <option key={assignment._id} value={assignment.batchId._id}>{assignment.batchId.batchName}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Milestone</label>

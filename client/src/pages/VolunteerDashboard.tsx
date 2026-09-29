@@ -5,11 +5,22 @@ import { addVolunteerNote } from '../services/sosService';
 import { markAttendanceManual } from '../services/attendanceService';
 import { getMyBatchAssignments } from '../services/batchAssignmentService';
 import { getCheckpointsByBatch } from '../services/checkpointService';
+import { getParticipantsByBatch } from '../services/bookingService';
+import { getIncidentsForBatch } from '../services/sosService';
 import type { BatchAssignmentSummary, CheckpointSummary } from '../types';
+
+type ParticipantOption = {
+  _id: string;
+  status: string;
+  participantId: { _id: string; fullName: string } | null;
+};
+type IncidentOption = { _id: string; description?: string };
 
 export default function VolunteerDashboard() {
   const [myBatches, setMyBatches] = useState<BatchAssignmentSummary[]>([]);
   const [checkpoints, setCheckpoints] = useState<CheckpointSummary[]>([]);
+  const [batchParticipants, setBatchParticipants] = useState<ParticipantOption[]>([]);
+  const [incidents, setIncidents] = useState<IncidentOption[]>([]);
   const [manualForm, setManualForm] = useState({ participantId: '', checkpointId: '', batchId: '' });
   const [manualMessage, setManualMessage] = useState('');
 
@@ -28,11 +39,16 @@ export default function VolunteerDashboard() {
   const handleBatchSelect = async (batchId: string) => {
     setManualForm((previous) => ({ ...previous, batchId, checkpointId: '' }));
     setCheckpoints([]);
+    setBatchParticipants([]);
     if (!batchId) return;
 
     try {
-      const response = await getCheckpointsByBatch(batchId);
-      setCheckpoints(response.data.checkpoints || []);
+      const [checkpointResponse, participantResponse] = await Promise.all([
+        getCheckpointsByBatch(batchId),
+        getParticipantsByBatch(batchId)
+      ]);
+      setCheckpoints(checkpointResponse.data.checkpoints || []);
+      setBatchParticipants(participantResponse.data.bookings || []);
     } catch (err) {
       console.error(err);
     }
@@ -55,7 +71,22 @@ export default function VolunteerDashboard() {
   const [noteForm, setNoteForm] = useState({ incidentId: '', notes: '' });
   const [noteMessage, setNoteMessage] = useState('');
 
-  const handleNoteChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const [noteBatchId, setNoteBatchId] = useState('');
+
+  const handleNoteBatchSelect = async (batchId: string) => {
+    setNoteBatchId(batchId);
+    setNoteForm((current) => ({ ...current, incidentId: '' }));
+    setIncidents([]);
+    if (!batchId) return;
+    try {
+      const response = await getIncidentsForBatch(batchId);
+      setIncidents(response.data.incidents || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleNoteChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setNoteForm({ ...noteForm, [e.target.name]: e.target.value });
   };
 
@@ -77,7 +108,7 @@ export default function VolunteerDashboard() {
 
         <div className="card">
           <h2>Scan Attendance</h2>
-          <AttendanceScanner />
+          <AttendanceScanner assignments={myBatches} checkpoints={checkpoints} onBatchSelect={handleBatchSelect} />
         </div>
 
         <div className="card">
@@ -85,7 +116,12 @@ export default function VolunteerDashboard() {
           <form onSubmit={handleManualSubmit}>
             <div className="form-group">
               <label>Participant ID</label>
-              <input name="participantId" placeholder="Participant ID" value={manualForm.participantId} onChange={handleManualChange} required />
+              <select name="participantId" value={manualForm.participantId} onChange={handleManualChange} disabled={!manualForm.batchId} required>
+                <option value="">Select a Participant</option>
+                {batchParticipants.filter((booking) => booking.status === 'Confirmed' && booking.participantId).map((booking) => (
+                  <option key={booking._id} value={booking.participantId!._id}>{booking.participantId!.fullName}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Batch</label>
@@ -118,8 +154,24 @@ export default function VolunteerDashboard() {
           <h2>Add Note to Incident</h2>
           <form onSubmit={handleNoteSubmit}>
             <div className="form-group">
-              <label>Incident ID</label>
-              <input name="incidentId" placeholder="Incident ID" onChange={handleNoteChange} required />
+              <label>Batch</label>
+              <select value={noteBatchId} onChange={(e) => handleNoteBatchSelect(e.target.value)} required>
+                <option value="">Select a Batch</option>
+                {myBatches.map((assignment) => assignment.batchId && (
+                  <option key={assignment._id} value={assignment.batchId._id}>{assignment.batchId.batchName}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Incident</label>
+              <select name="incidentId" value={noteForm.incidentId} onChange={handleNoteChange} disabled={!noteBatchId} required>
+                <option value="">Select an Incident</option>
+                {incidents.map((incident) => (
+                  <option key={incident._id} value={incident._id}>
+                    {incident.description || 'Incident'} — {incident._id}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Volunteer Notes</label>

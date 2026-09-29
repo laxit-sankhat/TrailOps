@@ -5,9 +5,9 @@ import { useAuth } from '../context/AuthContext';
 import { getAllPublicTrips } from '../services/tripService';
 import { createBooking, submitForMedicalReview, getMyBookings, cancelBooking, getBookingQR } from '../services/bookingService';
 import { uploadMedicalProfile } from '../services/medicalService';
-import { getBatchesByTrip } from '../services/batchService';
 import { submitFeedback } from '../services/feedbackService';
-import { createBookingGroup, joinBookingGroup, submitBookingGroup } from '../services/bookingGroupService';
+import { createBookingGroup, joinBookingGroup, submitBookingGroup, getMyOpenGroups } from '../services/bookingGroupService';
+import { getBatchesForTrip } from '../services/tripService';
 import type { BatchSummary, ParticipantBookingSummary } from '../types';
 
 export default function ParticipantDashboard() {
@@ -20,6 +20,7 @@ export default function ParticipantDashboard() {
   const [myBookings, setMyBookings] = useState<ParticipantBookingSummary[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(true);
   const [bookingsError, setBookingsError] = useState('');
+  const [openGroups, setOpenGroups] = useState<any[]>([]);
   const [message, setMessage] = useState('');
 
   const fetchMyBookings = async () => {
@@ -33,6 +34,15 @@ export default function ParticipantDashboard() {
       setBookingsError('Unable to load your bookings. Please try again later.');
     } finally {
       setLoadingBookings(false);
+    }
+  };
+
+  const fetchOpenGroups = async () => {
+    try {
+      const response = await getMyOpenGroups();
+      setOpenGroups(response.data.groups || []);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -50,6 +60,7 @@ export default function ParticipantDashboard() {
       }
     };
     fetchTrips();
+    fetchOpenGroups();
     getMyBookings()
       .then((response) => {
         if (active) {
@@ -72,13 +83,14 @@ export default function ParticipantDashboard() {
   const handleTripSelect = async (tripId: string) => {
     setSelectedTripId(tripId);
     setBatchId('');
+    setGroupBatchId('');
     setBatchesError('');
     if (!tripId) {
       setAvailableBatches([]);
       return;
     }
     try {
-      const response = await getBatchesByTrip(tripId);
+      const response = await getBatchesForTrip(tripId);
       setAvailableBatches(response.data.batches || []);
     } catch (err) {
       console.error(err);
@@ -182,16 +194,6 @@ export default function ParticipantDashboard() {
     setMedicalValidationErrors(nextErrors);
     if (Object.values(nextErrors).some(Boolean)) return;
     handleMedicalSubmit(e);
-    };
-
-    const handleSubmitReview = async () => {
-    try {
-        const response = await submitForMedicalReview(bookingId);
-        setMessage(`Booking submitted - status: ${response.data.booking.status}`);
-        await fetchMyBookings();
-    } catch (err: any) {
-        setMessage(err.response?.data?.message || 'Something went wrong');
-    }
     };
 
     const [qrImage, setQrImage] = useState('');
@@ -380,13 +382,22 @@ export default function ParticipantDashboard() {
               <h3>Create a Group</h3>
               <form onSubmit={handleCreateGroup}>
                 <div className="form-group">
-                  <label>Batch ID</label>
-                  <input
-                    placeholder="Enter Batch ID"
-                    value={groupBatchId}
-                    onChange={(e) => setGroupBatchId(e.target.value)}
-                    required
-                  />
+                  <label>Trip</label>
+                  <select value={selectedTripId} onChange={(e) => handleTripSelect(e.target.value)} required>
+                    <option value="">Select a Trip</option>
+                    {trips.map((trip) => (
+                      <option key={trip._id} value={trip._id}>{trip.name} ({trip.location})</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Batch</label>
+                  <select value={groupBatchId} onChange={(e) => setGroupBatchId(e.target.value)} disabled={!selectedTripId} required>
+                    <option value="">{selectedTripId ? 'Select a Batch' : 'Select a trip first'}</option>
+                    {availableBatches.map((batch) => (
+                      <option key={batch._id} value={batch._id}>{batch.batchName}</option>
+                    ))}
+                  </select>
                 </div>
                 <button type="submit" className="btn">Create Group</button>
               </form>
@@ -425,15 +436,20 @@ export default function ParticipantDashboard() {
 
             <div style={{ padding: '1rem', background: 'var(--bg-body)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
               <h3>Submit a Group</h3>
+              <button type="button" className="btn btn-sm btn-secondary" onClick={fetchOpenGroups} style={{ marginBottom: '0.75rem' }}>
+                Refresh Open Groups
+              </button>
               <form onSubmit={handleSubmitGroup}>
                 <div className="form-group">
-                  <label>Group ID</label>
-                  <input
-                    placeholder="Enter Group ID"
-                    value={submitGroupId}
-                    onChange={(e) => setSubmitGroupId(e.target.value)}
-                    required
-                  />
+                  <label>Open Group</label>
+                  <select value={submitGroupId} onChange={(e) => setSubmitGroupId(e.target.value)} required>
+                    <option value="">Select an Open Group</option>
+                    {openGroups.map((group) => (
+                      <option key={group._id} value={group._id}>
+                        {group.batchId?.batchName || 'Batch'} — {group.groupCode}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <button type="submit" className="btn">Submit Group</button>
               </form>
@@ -481,20 +497,20 @@ export default function ParticipantDashboard() {
         </div>
 
         <div className="card">
-          <h2>Submit Booking for Review</h2>
-          <div className="form-inline">
-            <div className="form-group" style={{ flex: '1 1 250px' }}>
-              <label>Booking ID</label>
-              <input placeholder="Enter Booking ID" value={bookingId} onChange={(e) => setBookingId(e.target.value)} />
-            </div>
-            <button onClick={handleSubmitReview} className="btn">Submit for Review</button>
-          </div>
-        </div>
-
-        <div className="card">
           <h2>Get My QR Code</h2>
           <div className="form-inline">
-            <button onClick={handleGetQR} className="btn">Generate / View QR</button>
+            <div className="form-group" style={{ flex: '1 1 250px' }}>
+              <label>Confirmed Booking</label>
+              <select value={bookingId} onChange={(e) => setBookingId(e.target.value)}>
+                <option value="">Select a Booking</option>
+                {myBookings.filter((booking) => booking.status === 'Confirmed').map((booking) => (
+                  <option key={booking._id} value={booking._id}>
+                    {booking.tripId?.name || 'Trek'} — {booking.batchId?.batchName || 'Batch'}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button onClick={handleGetQR} className="btn" disabled={!bookingId}>Generate / View QR</button>
           </div>
           {qrImage && (
             <div className="qr-image-container">
@@ -506,10 +522,6 @@ export default function ParticipantDashboard() {
         <div className="card">
           <h2>Submit Feedback</h2>
           <form onSubmit={handleFeedbackSubmit}>
-            <div className="form-group">
-              <label>Booking ID</label>
-              <input name="bookingId" placeholder="Enter Booking ID" value={feedbackForm.bookingId} onChange={handleFeedbackChange} required />
-            </div>
             <div className="form-group">
               <label>Guide Rating (1-5)</label>
               <input name="ratingGuide" type="number" min="1" max="5" defaultValue={5} onChange={handleFeedbackChange} required />

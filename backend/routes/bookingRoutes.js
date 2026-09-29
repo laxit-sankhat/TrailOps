@@ -16,6 +16,6 @@ router.patch('/confirm/:id', verifyToken, restrictTo('TripCoordinator'), confirm
 
 router.get('/:id/qr', verifyToken, restrictTo('Participant'), getBookingQRCode);
 
-router.get('/batch/:batchId', verifyToken, restrictTo('OrgAdmin', 'TripCoordinator', 'TrekLeader'), getParticipantsByBatch);
+router.get('/batch/:batchId', verifyToken, restrictTo('OrgAdmin', 'TripCoordinator', 'TrekLeader', 'Volunteer'), getParticipantsByBatch);
 
 export default router;  

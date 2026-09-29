@@ -167,3 +167,19 @@ export const getMyOrgGear = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const getMyOrgAllocations = async (req, res) => {
+  try {
+    const gearItems = await GearItem.find({ organizationId: req.user.organizationId }).select('_id');
+    const allocations = await GearAllocation.find({
+      gearItemId: { $in: gearItems.map((gearItem) => gearItem._id) },
+      returnedAt: null
+    })
+      .populate('gearItemId', 'name')
+      .populate('participantId', 'fullName');
+    res.status(200).json({ success: true, allocations });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

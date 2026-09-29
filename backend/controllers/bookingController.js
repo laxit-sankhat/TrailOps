@@ -4,6 +4,8 @@ import Trip from '../models/Trip.js';
 import MedicalReview from '../models/MedicalReview.js';
 import MedicalProfile from '../models/MedicalProfile.js';
 import QRCode from 'qrcode';
+import Notification from '../models/Notification.js';
+import BatchAssignment from '../models/BatchAssignment.js';
 
 const ACTIVE_STATUSES = ['Inquiry', 'PendingMedicalReview', 'MedicallyApproved', 'Confirmed'];
 
@@ -188,6 +190,16 @@ export const confirmBooking = async (req, res) => {
     booking.status = 'Confirmed';
     booking.qrCodeValue = booking._id.toString(); // opaque reference - just the booking's own ID
     await booking.save();
+    try {
+      await Notification.create({
+        recipientUserId: booking.participantId,
+        message: 'Your booking for batch has been confirmed!',
+        relatedType: 'Booking',
+        relatedId: booking._id
+      });
+    } catch (notificationError) {
+      console.error('Failed to create booking confirmation notification:', notificationError);
+    }
 
     res.status(200).json({ success: true, booking });
   }
@@ -231,6 +243,18 @@ export const getParticipantsByBatch = async (req, res) => {
 
     if (batch.organizationId.toString() !== req.user.organizationId) {
       return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
+    }
+
+    if (['TrekLeader', 'Volunteer'].includes(req.user.role)) {
+      const assignment = await BatchAssignment.findOne({
+        batchId: req.params.batchId,
+        userId: req.user.userId,
+        roleInBatch: req.user.role
+      });
+
+      if (!assignment) {
+        return res.status(403).json({ success: false, message: 'You are not assigned to this batch' });
+      }
     }
 
     const bookings = await Booking.find({ batchId: req.params.batchId })

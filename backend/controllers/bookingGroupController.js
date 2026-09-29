@@ -113,3 +113,16 @@ export const submitBookingGroup = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const getMyOpenGroups = async (req, res) => {
+  try {
+    const groups = await BookingGroup.find({
+      initiatorId: req.user.userId,
+      status: 'Open'
+    }).populate('batchId', 'batchName');
+    res.status(200).json({ success: true, groups });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

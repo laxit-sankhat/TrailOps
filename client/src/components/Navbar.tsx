@@ -1,4 +1,5 @@
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -10,6 +11,7 @@ export default function Navbar() {
         <span className="navbar-title">TrailOps</span>
       </div>
       <div className="navbar-user">
+        {user && <NotificationBell />}
         {user?.fullName && <span className="navbar-name">{user.fullName}</span>}
         <span className="role-badge">{user?.role}</span>
         <button className="btn-logout" onClick={() => logout()}>Log Out</button>

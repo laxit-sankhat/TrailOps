@@ -128,3 +128,26 @@ export const getMyBatchAssignments = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const getAssignmentsForBatch = async (req, res) => {
+  try {
+    const batch = await Batch.findById(req.params.batchId);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: 'Batch not found' });
+    }
+
+    if (batch.organizationId.toString() !== req.user.organizationId) {
+      return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
+    }
+
+    const filter = { batchId: req.params.batchId };
+    if (req.query.role) filter.roleInBatch = req.query.role;
+
+    const assignments = await BatchAssignment.find(filter)
+      .populate('userId', 'fullName email');
+    res.status(200).json({ success: true, assignments });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

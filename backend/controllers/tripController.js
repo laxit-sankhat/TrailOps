@@ -1,4 +1,5 @@
 import Trip from '../models/Trip.js';
+import Batch from '../models/Batch.js';
 import cloudinary from '../config/cloudinary.js';
 
 export const createTrip = async (req, res) => {
@@ -131,6 +132,19 @@ export const getAllApprovedTrips = async (req, res) => {
   try {
     const trips = await Trip.find({ status: 'Active' }).populate('organizationId', 'name');
     res.status(200).json({ success: true, count: trips.length, trips });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getBatchesForTrip = async (req, res) => {
+  try {
+    const batches = await Batch.find({
+      tripId: req.params.tripId,
+      status: { $ne: 'Completed' }
+    });
+    res.status(200).json({ success: true, batches });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: err.message });
