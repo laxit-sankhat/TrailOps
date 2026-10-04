@@ -1,0 +1,634 @@
+/* ==========================================================================
+   TrailOps Participant - Medical Profile Page
+   ========================================================================== */
+
+.participant-medical-page {
+  min-height: 100vh;
+  background: var(--bg-body);
+}
+
+.participant-medical-main {
+  width: 100%;
+  min-width: 0;
+}
+
+.participant-medical-container {
+  display: flex;
+  width: min(100% - 3rem, 1280px);
+  flex-direction: column;
+  gap: 1.6rem;
+  margin: 0 auto;
+  padding: 2.25rem 0 4rem;
+}
+
+/* --------------------------------------------------------------------------
+   Header Hierarchy
+   -------------------------------------------------------------------------- */
+.participant-medical-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.participant-medical-eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.participant-medical-title {
+  margin: 0 0 0.45rem;
+  color: var(--text-main);
+  font-size: clamp(1.8rem, 3vw, 2.35rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.participant-medical-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 680px;
+}
+
+/* --------------------------------------------------------------------------
+   Privacy & Security Notice
+   -------------------------------------------------------------------------- */
+.participant-medical-privacy-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.15rem;
+  border-radius: var(--radius-md);
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.participant-medical-privacy-notice svg {
+  flex-shrink: 0;
+  color: var(--primary);
+}
+
+/* --------------------------------------------------------------------------
+   Panels & Forms
+   -------------------------------------------------------------------------- */
+.participant-medical-panel {
+  min-width: 0;
+  padding: 1.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.participant-medical-panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+.participant-medical-panel-heading h2 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.25rem;
+  font-weight: 750;
+}
+
+.participant-medical-icon {
+  display: grid;
+  width: 2.65rem;
+  height: 2.65rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.participant-medical-icon--review {
+  background: var(--bg-surface-alt);
+  color: var(--text-muted);
+}
+
+.participant-medical-intro {
+  margin: 0 0 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.participant-medical-validity {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius-md);
+  background: var(--success-bg);
+  color: var(--success-text);
+  font-size: 0.86rem;
+}
+
+.participant-medical-validity svg {
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Existing Active Document Card
+   -------------------------------------------------------------------------- */
+.participant-medical-existing-doc-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1.5px solid #bbf7d0;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+  margin-bottom: 1.35rem;
+  flex-wrap: wrap;
+}
+
+.participant-medical-doc-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.participant-medical-doc-icon-wrap {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.participant-medical-doc-tag {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  color: #166534;
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+
+.participant-medical-doc-name {
+  display: block;
+  font-size: 0.92rem;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 480px;
+}
+
+.participant-medical-view-doc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Form Grid & Inputs
+   -------------------------------------------------------------------------- */
+.participant-medical-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.participant-medical-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.participant-medical-form-grid .form-group {
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.participant-required-star {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Document Upload Picker
+   -------------------------------------------------------------------------- */
+.participant-medical-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 1.1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-alt);
+}
+
+.participant-medical-upload-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.participant-medical-optional-tag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.participant-medical-upload-hint {
+  margin: 0 0 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.participant-medical-hidden-input {
+  display: none;
+}
+
+/* Dropzone */
+.participant-medical-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.6rem 1rem;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  gap: 0.35rem;
+}
+
+.participant-medical-dropzone:hover,
+.participant-medical-dropzone:focus-visible {
+  border-color: var(--primary);
+  background: #f0fdf4;
+  outline: none;
+}
+
+.participant-medical-dropzone-icon {
+  color: var(--primary);
+  margin-bottom: 0.25rem;
+}
+
+.participant-medical-dropzone-title {
+  color: var(--text-main);
+  font-size: 0.92rem;
+  font-weight: 650;
+}
+
+.participant-medical-dropzone-sub {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+/* Selected File Card */
+.participant-medical-selected-file-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+}
+
+.participant-medical-selected-file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.participant-medical-file-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.participant-medical-selected-file-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.participant-medical-selected-file-name {
+  font-size: 0.88rem;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.participant-medical-selected-file-specs {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.participant-medical-selected-file-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.participant-medical-remove-file-btn {
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface-alt);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.participant-medical-remove-file-btn:hover {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.participant-medical-field-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--error-text);
+  font-size: 0.82rem;
+  margin-top: 0.35rem;
+}
+
+/* --------------------------------------------------------------------------
+   Submit Actions & Notifications
+   -------------------------------------------------------------------------- */
+.participant-medical-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 0.5rem;
+}
+
+.participant-medical-submit-btn {
+  display: inline-flex;
+  min-height: 2.6rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-weight: 650;
+  padding: 0.6rem 1.35rem;
+}
+
+.participant-medical-feedback {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  font-weight: 550;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.participant-medical-feedback--success {
+  border: 1px solid var(--success-border);
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.participant-medical-feedback--error {
+  border: 1px solid var(--error-border);
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.participant-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Review Progress Panel & Cards
+   -------------------------------------------------------------------------- */
+.participant-medical-review-panel {
+  box-shadow: none;
+  background: var(--bg-surface);
+}
+
+.participant-medical-reviews {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.participant-medical-review-card {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-body);
+}
+
+.participant-medical-review-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.participant-medical-review-info h3 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.05rem;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.participant-medical-review-info p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.participant-medical-review-dates {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.participant-medical-review-dates svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.participant-medical-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  padding: 0.32rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.participant-medical-status--pending {
+  background: #fef3c7;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+.participant-medical-status--approved {
+  border-color: var(--success-border);
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.participant-medical-status--rejected {
+  border-color: var(--error-border);
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.participant-medical-state {
+  display: flex;
+  min-height: 4rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-body);
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 0.88rem;
+}
+
+.participant-medical-state--error {
+  border: 1px solid var(--error-border);
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .participant-medical-container {
+    width: min(100% - 2rem, 1280px);
+    padding-top: 1.5rem;
+  }
+
+  .participant-medical-existing-doc-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .participant-medical-view-doc-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .participant-medical-review-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .participant-medical-status {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .participant-medical-container {
+    width: min(100% - 1.25rem, 1280px);
+    gap: 1.25rem;
+    padding-top: 1.1rem;
+  }
+
+  .participant-medical-panel {
+    padding: 1.15rem;
+  }
+
+  .participant-medical-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .participant-medical-submit-btn {
+    width: 100%;
+  }
+
+  .participant-medical-selected-file-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .participant-medical-selected-file-actions {
+    justify-content: flex-end;
+  }
+}

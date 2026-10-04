@@ -1,0 +1,1224 @@
+/* ==========================================================================
+   TrailOps Participant - Group Bookings Page
+   ========================================================================== */
+
+.participant-groups-page {
+  min-height: 100vh;
+  background: var(--bg-body);
+}
+
+.participant-groups-main {
+  min-width: 0;
+  width: 100%;
+}
+
+.participant-groups-container {
+  display: flex;
+  width: min(100% - 3rem, 1280px);
+  flex-direction: column;
+  gap: 1.75rem;
+  margin: 0 auto;
+  padding: 2.25rem 0 4rem;
+}
+
+/* --------------------------------------------------------------------------
+   1. Page Header Hierarchy
+   -------------------------------------------------------------------------- */
+.participant-groups-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.participant-groups-header-content {
+  flex: 1;
+  min-width: 260px;
+}
+
+.participant-groups-eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.participant-groups-title {
+  margin: 0 0 0.45rem;
+  color: var(--text-main);
+  font-size: clamp(1.8rem, 3vw, 2.35rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.participant-groups-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.participant-groups-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.participant-groups-header-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Alert Banner (Notifications)
+   -------------------------------------------------------------------------- */
+.participant-groups-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1.15rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.participant-groups-alert--success {
+  border-color: var(--success-border);
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.participant-groups-alert--error {
+  border-color: var(--error-border);
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.participant-groups-alert--info {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.participant-groups-alert-text {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 550;
+  line-height: 1.4;
+}
+
+.participant-groups-alert-close {
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: currentColor;
+  opacity: 0.75;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.participant-groups-alert-close:hover {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Share Callout (Prominently displayed after creating a group)
+   -------------------------------------------------------------------------- */
+.participant-groups-share-callout {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+  box-shadow: 0 4px 14px rgba(27, 67, 50, 0.08);
+  animation: fadeIn 0.25s ease-out;
+}
+
+.participant-groups-share-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.participant-groups-share-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.participant-groups-share-info h4 {
+  margin: 0 0 0.3rem;
+  color: var(--text-main);
+  font-size: 1.15rem;
+  font-weight: 750;
+}
+
+.participant-groups-share-info p {
+  margin: 0 0 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.participant-groups-share-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.participant-groups-code-display {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  color: var(--primary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  box-shadow: var(--shadow-sm);
+}
+
+.participant-groups-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 650;
+}
+
+.participant-groups-share-dismiss {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.participant-groups-share-dismiss:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--text-main);
+}
+
+/* --------------------------------------------------------------------------
+   2. Group Overview KPI Cards
+   -------------------------------------------------------------------------- */
+.participant-groups-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.participant-groups-kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.participant-groups-kpi-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.participant-groups-kpi-icon-wrap {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+}
+
+.participant-groups-kpi-icon-wrap--primary {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.participant-groups-kpi-icon-wrap--accent {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.participant-groups-kpi-icon-wrap--neutral {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.participant-groups-kpi-icon-wrap--warning {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.participant-groups-kpi-data {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.participant-groups-kpi-label {
+  font-size: 0.75rem;
+  font-weight: 650;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.participant-groups-kpi-value {
+  color: var(--text-main);
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* --------------------------------------------------------------------------
+   3. Group Booking Workflow Stepper Banner
+   -------------------------------------------------------------------------- */
+.participant-groups-workflow-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.participant-groups-workflow-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.participant-groups-workflow-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.participant-groups-workflow-title svg {
+  color: var(--primary);
+}
+
+.participant-groups-workflow-rule {
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full);
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.participant-groups-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.participant-groups-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.participant-groups-step-num {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.participant-groups-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.participant-groups-step-body strong {
+  color: var(--text-main);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.participant-groups-step-body span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+/* --------------------------------------------------------------------------
+   Filter Tabs & List Section
+   -------------------------------------------------------------------------- */
+.participant-groups-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.participant-groups-filters-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.participant-groups-filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.participant-filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.participant-filter-tab:hover {
+  border-color: var(--primary);
+  color: var(--text-main);
+}
+
+.participant-filter-tab--active {
+  background: var(--text-main);
+  border-color: var(--text-main);
+  color: #ffffff;
+}
+
+.participant-filter-tab--active:hover {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #ffffff;
+}
+
+.participant-filter-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.35rem;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.06);
+  color: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.participant-filter-tab--active .participant-filter-count {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.participant-groups-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.participant-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Workflow Cards (Initiator & Member)
+   -------------------------------------------------------------------------- */
+.participant-groups-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.participant-group-workflow-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.participant-group-workflow-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-md);
+}
+
+.participant-group-workflow-card--member {
+  background: var(--bg-surface);
+}
+
+/* Card Header */
+.participant-group-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1.35rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-surface-alt);
+}
+
+.participant-group-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+}
+
+.participant-group-role-badge--initiator {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.participant-group-role-badge--member {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+.participant-group-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.22rem 0.65rem;
+  border-radius: var(--radius-full);
+}
+
+.participant-group-status-badge--open {
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  color: #92400e;
+}
+
+.participant-group-status-badge--pending {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #b45309;
+}
+
+.participant-group-status-badge--success {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+}
+
+.participant-group-status-badge--neutral {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+.participant-group-status-badge--info {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
+/* Card Body */
+.participant-group-card-body {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.35rem;
+}
+
+.participant-group-info-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.participant-group-trek-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.participant-group-trek-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.participant-group-trek-title {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.25rem;
+  font-weight: 750;
+  line-height: 1.25;
+}
+
+.participant-group-batch-title {
+  margin: 0 0 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.participant-group-dates-line {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.participant-group-dates-line svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+/* Group Code Card (in Initiator's group) */
+.participant-group-code-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-alt);
+  max-width: fit-content;
+  margin-top: 0.25rem;
+}
+
+.participant-group-code-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.participant-group-code-label {
+  font-size: 0.68rem;
+  font-weight: 750;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.participant-group-code-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--text-main);
+}
+
+.participant-group-card-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.participant-group-code-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 0.15rem;
+}
+
+.participant-group-member-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius-md);
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  font-size: 0.8rem;
+  font-weight: 550;
+  margin-top: 0.45rem;
+  max-width: fit-content;
+}
+
+.participant-group-member-notice svg {
+  flex-shrink: 0;
+}
+
+/* Action Column */
+.participant-group-action-col {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.participant-group-action-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-alt);
+}
+
+.participant-group-action-prompt strong {
+  display: block;
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-weight: 750;
+  margin-bottom: 0.2rem;
+}
+
+.participant-group-action-prompt p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.participant-group-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+  font-weight: 700;
+}
+
+.participant-group-action-box--member {
+  align-items: flex-start;
+}
+
+.participant-group-member-status-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.participant-group-action-box--member strong {
+  color: var(--text-main);
+  font-size: 0.95rem;
+  font-weight: 750;
+  margin-bottom: 0.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   Empty & Error States
+   -------------------------------------------------------------------------- */
+.participant-groups-empty-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3.75rem 1.5rem;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  gap: 0.75rem;
+}
+
+.participant-groups-empty-icon-wrap {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius-full);
+  background: var(--primary-light);
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.participant-groups-empty-hero h2 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.35rem;
+  font-weight: 750;
+}
+
+.participant-groups-empty-hero p {
+  margin: 0 0 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  max-width: 440px;
+}
+
+.participant-groups-empty-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.participant-groups-filter-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.75rem 1.5rem;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  gap: 0.5rem;
+}
+
+.participant-groups-filter-empty h4 {
+  margin: 0.25rem 0 0;
+  color: var(--text-main);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.participant-groups-filter-empty p {
+  margin: 0 0 0.65rem;
+  font-size: 0.88rem;
+}
+
+.participant-groups-error-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid var(--error-border);
+  border-radius: var(--radius-lg);
+  background: var(--error-bg);
+  color: var(--error-text);
+  flex-wrap: wrap;
+}
+
+.participant-groups-error-icon {
+  flex-shrink: 0;
+}
+
+.participant-groups-error-content {
+  flex: 1;
+  min-width: 240px;
+}
+
+.participant-groups-error-content h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+  font-weight: 750;
+}
+
+.participant-groups-error-content p {
+  margin: 0;
+  font-size: 0.88rem;
+  opacity: 0.9;
+}
+
+/* Loading Skeletons */
+.participant-groups-skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.participant-group-skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+}
+
+.participant-skeleton-bar {
+  height: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface-alt);
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.participant-skeleton-bar--sm {
+  width: 20%;
+}
+
+.participant-skeleton-bar--lg {
+  width: 60%;
+  height: 18px;
+}
+
+.participant-skeleton-bar--md {
+  width: 40%;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Modals (Create, Join, Submit Confirmation)
+   -------------------------------------------------------------------------- */
+.participant-groups-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.participant-groups-modal {
+  position: relative;
+  display: flex;
+  width: min(100%, 500px);
+  max-height: calc(100dvh - 2rem);
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 1.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.participant-groups-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface-alt);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.participant-groups-modal-close:hover {
+  background: var(--border-color);
+  color: var(--text-main);
+}
+
+.participant-groups-modal-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.25rem;
+}
+
+.participant-groups-modal-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.participant-groups-modal-icon--join {
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.participant-groups-modal-icon--warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.participant-groups-modal-header h2 {
+  margin: 0 1.5rem 0.35rem 0;
+  color: var(--text-main);
+  font-size: 1.35rem;
+  font-weight: 750;
+}
+
+.participant-groups-modal-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.participant-groups-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.participant-groups-code-input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.2rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.participant-groups-modal-info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.participant-groups-modal-info-box svg {
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.participant-groups-field-error {
+  margin: 0.35rem 0 0;
+  color: var(--error-text);
+  font-size: 0.8rem;
+}
+
+.participant-groups-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Submit Confirmation Specifics */
+.participant-groups-submit-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1rem 1.15rem;
+  border-radius: var(--radius-md);
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  margin-bottom: 1.25rem;
+}
+
+.participant-groups-submit-notice-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+  font-weight: 750;
+  color: #b45309;
+}
+
+.participant-groups-submit-notice p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.participant-groups-submit-notice-sub {
+  font-weight: 600;
+  color: #78350f;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Layout & Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .participant-groups-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .participant-groups-steps-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .participant-groups-container {
+    width: min(100% - 2rem, 1280px);
+    gap: 1.35rem;
+    padding-top: 1.5rem;
+  }
+
+  .participant-group-card-body {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .participant-group-action-col {
+    width: 100%;
+  }
+
+  .participant-groups-steps-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .participant-groups-container {
+    width: min(100% - 1.25rem, 1280px);
+    gap: 1.15rem;
+    padding-top: 1.1rem;
+  }
+
+  .participant-groups-header {
+    flex-direction: column;
+  }
+
+  .participant-groups-header-actions {
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .participant-groups-header-actions .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .participant-groups-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .participant-groups-kpi-card {
+    padding: 0.9rem;
+    gap: 0.65rem;
+  }
+
+  .participant-groups-kpi-icon-wrap {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .participant-groups-kpi-value {
+    font-size: 1.35rem;
+  }
+
+  .participant-groups-modal {
+    padding: 1.25rem;
+  }
+
+  .participant-groups-share-callout {
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .participant-groups-code-display {
+    font-size: 1.15rem;
+    padding: 0.35rem 0.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .participant-groups-kpi-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .participant-groups-header-actions {
+    flex-direction: column;
+  }
+}

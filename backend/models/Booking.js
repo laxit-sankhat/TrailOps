@@ -3,6 +3,7 @@ const { Schema, model } = mongoose;
 
 const bookingSchema = new Schema(
     {
+        // add restict to booking before x days , trip vise
         participantId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         batchId: { type: Schema.Types.ObjectId, ref: 'Batch', required: true },
         tripId: { type: Schema.Types.ObjectId, ref: 'Trip', required: true },

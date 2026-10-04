@@ -1,0 +1,529 @@
+/* ParticipantTripCard - Premium TrailOps Trek Card */
+
+.participant-trip-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  cursor: pointer;
+  outline: none;
+  transition:
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.participant-trip-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(45, 106, 79, 0.35);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08), 0 8px 16px -6px rgba(0, 0, 0, 0.04);
+}
+
+.participant-trip-card:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Media / Carousel Section */
+.participant-trip-card__media {
+  position: relative;
+  width: 100%;
+  height: 210px;
+  background: var(--bg-surface-alt);
+  overflow: hidden;
+  user-select: none;
+}
+
+.participant-trip-card__carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.participant-trip-card__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.02);
+  transition: opacity 0.5s ease, transform 0.6s ease;
+  pointer-events: none;
+}
+
+.participant-trip-card__image.is-active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.participant-trip-card__fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+  color: #ffffff;
+}
+
+.participant-trip-card__fallback-icon {
+  opacity: 0.85;
+}
+
+.participant-trip-card__fallback span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.9;
+}
+
+/* Difficulty Badge */
+.participant-trip-card__badge-wrapper {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.participant-trip-card__difficulty {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.participant-trip-card__difficulty--easy {
+  background: rgba(22, 101, 52, 0.9);
+  color: #ffffff;
+}
+
+.participant-trip-card__difficulty--moderate {
+  background: rgba(180, 83, 9, 0.9);
+  color: #ffffff;
+}
+
+.participant-trip-card__difficulty--difficult {
+  background: rgba(153, 27, 27, 0.9);
+  color: #ffffff;
+}
+
+/* Prominent Date Circle Badge (overlapping the trip image) */
+.participant-trip-card__date-badge {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 3;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+}
+
+.participant-trip-card:hover .participant-trip-card__date-badge {
+  transform: scale(1.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+}
+
+.participant-trip-card__date-badge-day {
+  font-size: 1.12rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #1b4332;
+}
+
+.participant-trip-card__date-badge-month {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #2d6a4f;
+  margin-top: 1px;
+}
+
+/* Dots / Indicators */
+.participant-trip-card__dots {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: var(--radius-full);
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.participant-trip-card__dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: width 0.25s ease, background-color 0.25s ease;
+}
+
+.participant-trip-card__dot:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.participant-trip-card__dot.is-active {
+  width: 16px;
+  background: #ffffff;
+}
+
+/* Card Content Area */
+.participant-trip-card__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding: 1.15rem 1.25rem 1.25rem;
+  gap: 0.9rem;
+}
+
+/* Metadata Row */
+.participant-trip-card__meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem;
+  color: var(--text-light);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.participant-trip-card__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.participant-trip-card__meta-item svg {
+  flex-shrink: 0;
+  color: var(--primary-accent);
+}
+
+/* Title & Description */
+.participant-trip-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.participant-trip-card__title {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.12rem;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.participant-trip-card__description {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Batches Section */
+.participant-trip-card__batches-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+}
+
+.participant-trip-card__batches-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.participant-trip-card__batches-label {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.participant-trip-card__batch-selected-name {
+  color: var(--primary-accent);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Batch Date Circles Row */
+.participant-trip-card__batch-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+  scrollbar-width: thin;
+}
+
+.participant-trip-card__batch-selector::-webkit-scrollbar {
+  height: 4px;
+}
+
+.participant-trip-card__batch-selector::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+}
+
+.participant-trip-card__batch-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1.5px solid var(--border-color);
+  border-radius: 50%;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.participant-trip-card__batch-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+.participant-trip-card__batch-btn.is-selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(27, 67, 50, 0.22);
+}
+
+.participant-trip-card__batch-btn--single {
+  cursor: default;
+  pointer-events: none;
+}
+
+.participant-trip-card__batch-day {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.participant-trip-card__batch-month {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-light);
+  letter-spacing: 0.04em;
+  margin-top: 1px;
+}
+
+.participant-trip-card__batch-btn.is-selected .participant-trip-card__batch-month {
+  color: var(--primary-accent);
+}
+
+/* Single Batch Display - Retains prominent date circle */
+.participant-trip-card__single-batch-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.participant-trip-card__single-batch-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.participant-trip-card__single-batch-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.participant-trip-card__single-batch-date {
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* No Batches */
+.participant-trip-card__no-batches {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-light);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+/* Footer: Price + CTA */
+.participant-trip-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.participant-trip-card__price-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.participant-trip-card__price-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.participant-trip-card__price-amount {
+  color: var(--primary);
+  font-size: 1.18rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.participant-trip-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.participant-trip-card__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.35rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 650;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.18s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.participant-trip-card__cta:hover:not(:disabled) {
+  background: var(--primary-hover);
+  color: #ffffff;
+}
+
+.participant-trip-card__cta:disabled {
+  background: var(--bg-surface-alt);
+  color: var(--text-light);
+  cursor: not-allowed;
+  border: 1px solid var(--border-color);
+}
+
+.participant-trip-card__cta--booked {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-border);
+}
+
+.participant-trip-card__cta--booked:hover:not(:disabled) {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+@media (max-width: 480px) {
+  .participant-trip-card__date-badge {
+    top: 0.65rem;
+    right: 0.65rem;
+    width: 46px;
+    height: 46px;
+  }
+
+  .participant-trip-card__date-badge-day {
+    font-size: 1rem;
+  }
+
+  .participant-trip-card__date-badge-month {
+    font-size: 0.55rem;
+  }
+
+  .participant-trip-card__batch-btn {
+    width: 42px;
+    height: 42px;
+  }
+
+  .participant-trip-card__batch-day {
+    font-size: 0.88rem;
+  }
+
+  .participant-trip-card__batch-month {
+    font-size: 0.58rem;
+  }
+}
+

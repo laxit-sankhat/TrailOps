@@ -77,7 +77,7 @@ export const getIncidentsForBatch = async (req, res) => {
       if (!assignment) {
         return res.status(403).json({ success: false, message: 'You are not assigned to this batch' });
       }
-    } else if (batch.organizationId.toString() !== req.user.organizationId) {
+    } else if (batch.organizationId?.toString() !== req.user?.organizationId?.toString()) {
       return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
     }
 

@@ -1,0 +1,701 @@
+/* ==========================================================================
+   TrailOps Participant - Profile & Account Page Styles
+   Design System: matches Participant Dashboard, Medical, Feedback & Bookings.
+   Scoped under .pp-* to prevent styles leaking.
+   ========================================================================== */
+
+/* Page shell */
+.pp-page {
+  min-height: 100vh;
+  background: var(--bg-body);
+}
+
+.pp-main {
+  width: 100%;
+  min-width: 0;
+}
+
+.pp-container {
+  display: flex;
+  width: min(100% - 3rem, 1280px);
+  flex-direction: column;
+  gap: 1.75rem;
+  margin: 0 auto;
+  padding: 2.25rem 0 4.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   1. Page Header Hierarchy
+   -------------------------------------------------------------------------- */
+.pp-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.pp-header-content {
+  flex: 1;
+  min-width: 260px;
+}
+
+.pp-eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.pp-title {
+  margin: 0 0 0.45rem;
+  color: var(--text-main);
+  font-size: clamp(1.8rem, 3vw, 2.35rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.pp-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  max-width: 680px;
+}
+
+/* --------------------------------------------------------------------------
+   2. Panel Card Containers
+   -------------------------------------------------------------------------- */
+.pp-panel {
+  min-width: 0;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pp-panel:hover {
+  border-color: #cbd5e1;
+}
+
+/* --------------------------------------------------------------------------
+   3. Loading and Error States
+   -------------------------------------------------------------------------- */
+.pp-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4.5rem 2rem;
+  gap: 0.85rem;
+}
+
+.pp-loading-icon {
+  color: var(--primary);
+}
+
+.pp-loading-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.pp-loading-desc {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  max-width: 420px;
+}
+
+.pp-spin {
+  animation: pp-rotate 0.9s linear infinite;
+}
+
+@keyframes pp-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pp-error-state {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.15rem;
+  padding: 1.75rem;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.pp-error-icon {
+  color: #dc2626;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.pp-error-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.pp-error-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #991b1b;
+}
+
+.pp-error-desc {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #b91c1c;
+  line-height: 1.45;
+}
+
+/* --------------------------------------------------------------------------
+   4. Status Alert Banners
+   -------------------------------------------------------------------------- */
+.pp-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 550;
+  animation: pp-fade-in 0.2s ease-out;
+}
+
+.pp-banner-icon {
+  flex-shrink: 0;
+}
+
+.pp-banner--success {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.pp-banner--error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+@keyframes pp-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. Profile Hero Identity Card
+   -------------------------------------------------------------------------- */
+.pp-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  padding: 1.75rem 2rem;
+}
+
+.pp-hero-avatar-wrap {
+  flex-shrink: 0;
+  width: 88px;
+  height: 88px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 3.5px solid var(--primary-light);
+  box-shadow: var(--shadow-sm);
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pp-hero-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pp-hero-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  background: var(--primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.85rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.pp-hero-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.pp-hero-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.pp-hero-name {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.5vw, 1.6rem);
+  color: var(--text-main);
+  font-weight: 750;
+  letter-spacing: -0.01em;
+}
+
+.pp-hero-email {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.pp-hero-hint {
+  margin: 0.25rem 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* --------------------------------------------------------------------------
+   6. Badges
+   -------------------------------------------------------------------------- */
+.pp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.22rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.pp-badge--role {
+  background: var(--primary-light);
+  color: var(--primary-accent);
+  border: 1px solid #c7e6c9;
+}
+
+/* --------------------------------------------------------------------------
+   7. Form Structure & Two-Column Layout
+   -------------------------------------------------------------------------- */
+.pp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.pp-content-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+.pp-main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  min-width: 0;
+}
+
+.pp-sidebar-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+/* Section Header Inside Panels */
+.pp-section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin-bottom: 1.4rem;
+}
+
+.pp-section-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.pp-section-icon-wrap--amber {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.pp-section-title {
+  margin: 0 0 0.25rem;
+  font-size: 1.15rem;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.pp-section-desc {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+/* --------------------------------------------------------------------------
+   8. Form Grid & Input Controls
+   -------------------------------------------------------------------------- */
+.pp-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.pp-grid--2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.pp-grid--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.pp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.pp-form-group--full {
+  grid-column: 1 / -1;
+}
+
+.pp-label {
+  font-size: 0.84rem;
+  font-weight: 650;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pp-required {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.pp-readonly-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Inputs & Textarea */
+.pp-input,
+.pp-textarea {
+  width: 100%;
+  padding: 0.68rem 0.88rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pp-input:focus,
+.pp-textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
+}
+
+.pp-input--error {
+  border-color: #dc2626;
+}
+
+.pp-input--error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.pp-input--readonly {
+  background: var(--bg-surface-alt);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  border-color: #e2e8f0;
+}
+
+.pp-input--has-icon,
+.pp-textarea--has-icon {
+  padding-left: 2.35rem;
+}
+
+.pp-input-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pp-input-icon-wrap--top {
+  align-items: flex-start;
+}
+
+.pp-input-icon-wrap--top .pp-input-icon {
+  margin-top: 0.75rem;
+}
+
+.pp-input-icon {
+  position: absolute;
+  left: 0.8rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.pp-textarea {
+  resize: vertical;
+  min-height: 85px;
+}
+
+.pp-field-hint {
+  font-size: 0.77rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-top: 0.15rem;
+}
+
+.pp-field-error {
+  font-size: 0.8rem;
+  color: #dc2626;
+  font-weight: 550;
+  margin-top: 0.15rem;
+}
+
+/* --------------------------------------------------------------------------
+   9. Account Meta List (Sidebar)
+   -------------------------------------------------------------------------- */
+.pp-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.pp-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
+  background: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.pp-meta-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pp-meta-value {
+  font-size: 0.92rem;
+  color: var(--text-main);
+  font-weight: 650;
+}
+
+/* Security / Privacy Information Callout */
+.pp-security-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1.15rem 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-lg);
+}
+
+.pp-security-note-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.pp-security-note-title {
+  margin: 0 0 0.25rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.pp-security-note-desc {
+  margin: 0;
+  font-size: 0.79rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   10. Action Controls Sticky Bar
+   -------------------------------------------------------------------------- */
+.pp-actions-panel {
+  position: sticky;
+  bottom: 1.5rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.15rem 1.65rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  flex-wrap: wrap;
+}
+
+.pp-dirty-notice {
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.pp-dirty-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #b45309;
+}
+
+.pp-dirty-indicator::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #f59e0b;
+  border-radius: var(--radius-full);
+}
+
+.pp-synced-indicator {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  font-weight: 500;
+}
+
+.pp-actions-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-left: auto;
+}
+
+.pp-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.88rem;
+  font-weight: 650;
+  min-height: 42px;
+}
+
+/* --------------------------------------------------------------------------
+   11. Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .pp-content-layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .pp-sidebar-column {
+    order: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .pp-container {
+    width: min(100% - 1.5rem, 100%);
+    padding: 1.5rem 0 3.5rem;
+    gap: 1.25rem;
+  }
+
+  .pp-hero-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .pp-hero-name-row {
+    justify-content: center;
+  }
+
+  .pp-hero-email {
+    justify-content: center;
+  }
+
+  .pp-grid--2,
+  .pp-grid--3 {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-actions-panel {
+    flex-direction: column;
+    align-items: stretch;
+    bottom: 1rem;
+    padding: 1rem 1.25rem;
+  }
+
+  .pp-actions-buttons {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .pp-actions-buttons .pp-action-btn {
+    flex: 1;
+  }
+}

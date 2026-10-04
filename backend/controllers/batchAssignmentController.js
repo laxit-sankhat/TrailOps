@@ -5,10 +5,14 @@ import Trip from '../models/Trip.js';
 
 export const createBatchAssignment = async (req, res) => {
   try {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
     const { batchId, userId, roleInBatch, supervisingTrekLeaderId } = req.body;
 
-    if (!['TrekLeader', 'Volunteer'].includes(roleInBatch)) {
-      return res.status(400).json({ success: false, message: 'roleInBatch must be TrekLeader or Volunteer' });
+    if (!['TrekLeader', 'Volunteer', 'MedicalOfficer'].includes(roleInBatch)) {
+      return res.status(400).json({ success: false, message: 'roleInBatch must be TrekLeader, Volunteer, or MedicalOfficer' });
     }
 
     const batch = await Batch.findById(batchId);
@@ -16,8 +20,7 @@ export const createBatchAssignment = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Batch not found' });
     }
 
-    const trip = await Trip.findById(batch.tripId);
-    if (trip.organizationId.toString() !== req.user.organizationId) {
+    if (batch.organizationId?.toString() !== req.user.organizationId.toString()) {
       return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
     }
 
@@ -48,6 +51,19 @@ export const createBatchAssignment = async (req, res) => {
 
       if (!membership) {
         return res.status(400).json({ success: false, message: 'This user is not a Volunteer in your organization' });
+      }
+    }
+
+    if (roleInBatch === 'MedicalOfficer') {
+      const membership = await OrganizationMembership.findOne({
+        userId,
+        organizationId: req.user.organizationId,
+        role: 'MedicalOfficer',
+        status: 'Active'
+      });
+
+      if (!membership) {
+        return res.status(400).json({ success: false, message: 'This user is not a Medical Officer in your organization' });
       }
     }
 
@@ -102,11 +118,15 @@ export const createBatchAssignment = async (req, res) => {
 
 export const removeBatchAssignment = async (req, res) => {
   try {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
     const assignment = await BatchAssignment.findById(req.params.id);
     if (!assignment) return res.status(404).json({ success: false, message: 'Assignment not found' });
 
     const batch = await Batch.findById(assignment.batchId);
-    if (!batch || batch.organizationId?.toString() !== req.user.organizationId) {
+    if (!batch || batch.organizationId?.toString() !== req.user.organizationId.toString()) {
       return res.status(403).json({ success: false, message: 'This assignment does not belong to your organization' });
     }
 
@@ -131,12 +151,16 @@ export const getMyBatchAssignments = async (req, res) => {
 
 export const getAssignmentsForBatch = async (req, res) => {
   try {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
     const batch = await Batch.findById(req.params.batchId);
     if (!batch) {
       return res.status(404).json({ success: false, message: 'Batch not found' });
     }
 
-    if (batch.organizationId.toString() !== req.user.organizationId) {
+    if (batch.organizationId?.toString() !== req.user.organizationId.toString()) {
       return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
     }
 

@@ -5,6 +5,9 @@ const organizationSchema = new Schema(
     {
         name: { type: String, required: true },
         registrationDetails: { type: String },
+
+        // Official contact email of the organization
+        // Must be unique across organizations
         contactEmail: {
             type: String,
             required: true,
@@ -20,6 +23,7 @@ const organizationSchema = new Schema(
             default: 'Approved'
             }
     },
+    // Automatically adds createdAt and updatedAt
     { timestamps: true }
 );
 

@@ -1,0 +1,813 @@
+/* ==========================================================================
+   TrailOps OrgAdmin Feedback Page Styling
+   ========================================================================== */
+
+.org-admin-feedback-page {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ==========================================================================
+   1. Header Row & Action Controls
+   ========================================================================== */
+
+.org-feedback-header-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.org-feedback-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.org-feedback-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 8px 14px;
+}
+
+.org-feedback-refresh-btn.is-refreshing svg {
+  animation: spinRefresh 0.8s linear infinite;
+}
+
+@keyframes spinRefresh {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   Global Alert Banner
+   ========================================================================== */
+
+.org-feedback-alert {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 12px 16px;
+  border-radius: var(--radius-md, 8px);
+  background: var(--error-bg, #fef2f2);
+  border: 1px solid var(--error-border, #fecaca);
+  color: var(--error-text, #991b1b);
+}
+
+.org-feedback-alert-content {
+  flex: 1;
+}
+
+.org-feedback-alert-title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.org-feedback-alert-message {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  opacity: 0.9;
+}
+
+.org-feedback-retry-btn {
+  font-size: 0.78rem;
+  padding: 5px 10px;
+}
+
+/* ==========================================================================
+   2. Insights Section (KPI Grid + Rating Distribution)
+   ========================================================================== */
+
+.org-feedback-insights-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* KPI 5-column grid on desktop */
+.org-feedback-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 1280px) {
+  .org-feedback-kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .org-feedback-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .org-feedback-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.org-feedback-kpi-card {
+  box-sizing: border-box;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.04));
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.org-feedback-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.07));
+}
+
+.org-feedback-kpi-card--highlight {
+  border-color: #fde68a;
+  background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%);
+}
+
+.org-feedback-kpi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.org-feedback-kpi-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted, #475569);
+}
+
+.org-feedback-kpi-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md, 8px);
+}
+
+.org-feedback-kpi-icon-wrap--primary {
+  background: var(--primary-light, #e8f5e9);
+  color: var(--primary, #1b4332);
+}
+
+.org-feedback-kpi-icon-wrap--amber {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.org-feedback-kpi-icon-wrap--green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.org-feedback-kpi-icon-wrap--teal {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+
+.org-feedback-kpi-icon-wrap--indigo {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.org-feedback-kpi-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.org-feedback-score-display {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.org-feedback-kpi-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-main, #0f172a);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.org-feedback-score-max {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-light, #64748b);
+}
+
+.org-feedback-kpi-subtext {
+  font-size: 0.74rem;
+  color: var(--text-muted, #64748b);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   Rating Distribution Card
+   ========================================================================== */
+
+.org-feedback-distribution-card {
+  box-sizing: border-box;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.35rem 1.5rem;
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.04));
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.org-feedback-distribution-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.org-feedback-distribution-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.org-feedback-distribution-desc {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted, #64748b);
+}
+
+.org-feedback-overall-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 4px 10px;
+  border-radius: var(--radius-full, 9999px);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.org-feedback-distribution-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.org-feedback-distribution-row {
+  display: grid;
+  grid-template-columns: 48px 1fr 90px;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.org-feedback-distribution-star-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-main, #0f172a);
+}
+
+.org-feedback-star-tiny {
+  color: #f59e0b;
+}
+
+.org-feedback-distribution-track {
+  width: 100%;
+  height: 9px;
+  background: var(--bg-surface-alt, #f1f5f9);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.org-feedback-distribution-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.org-feedback-distribution-fill--5 {
+  background: #16a34a;
+}
+
+.org-feedback-distribution-fill--4 {
+  background: #10b981;
+}
+
+.org-feedback-distribution-fill--3 {
+  background: #f59e0b;
+}
+
+.org-feedback-distribution-fill--2 {
+  background: #f97316;
+}
+
+.org-feedback-distribution-fill--1 {
+  background: #ef4444;
+}
+
+.org-feedback-distribution-count {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.org-feedback-distribution-count-num {
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.org-feedback-distribution-count-percent {
+  color: var(--text-light, #64748b);
+  font-size: 0.76rem;
+}
+
+/* ==========================================================================
+   3. Filters Toolbar
+   ========================================================================== */
+
+.org-feedback-filters-bar {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.04));
+}
+
+.org-feedback-filters-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.org-feedback-filters-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.org-feedback-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  color: var(--primary-accent, #2d6a4f);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm, 4px);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.org-feedback-reset-btn:hover {
+  background: var(--primary-light, #e8f5e9);
+  color: var(--primary, #1b4332);
+}
+
+.org-feedback-filters-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 820px) {
+  .org-feedback-filters-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.org-feedback-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.org-feedback-filter-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted, #475569);
+}
+
+.org-feedback-select {
+  box-sizing: border-box;
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: var(--text-main, #0f172a);
+  background-color: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-md, 8px);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.org-feedback-select:focus {
+  border-color: var(--border-focus, #2d6a4f);
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
+}
+
+/* ==========================================================================
+   4. Feedback Review Cards List
+   ========================================================================== */
+
+.org-feedback-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.org-feedback-list-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.org-feedback-list-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.org-feedback-count-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--primary, #1b4332);
+  background: var(--primary-light, #e8f5e9);
+  padding: 2px 8px;
+  border-radius: var(--radius-full, 9999px);
+}
+
+.org-feedback-showing-text {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-light, #64748b);
+}
+
+/* Cards Grid (2-col Desktop, 1-col Tablet/Mobile) */
+.org-feedback-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .org-feedback-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Review Card */
+.org-feedback-card {
+  box-sizing: border-box;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.04));
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.org-feedback-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.07));
+  border-color: #cbd5e1;
+}
+
+/* Card Header */
+.org-feedback-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.org-feedback-card-author {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.org-feedback-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--bg-surface-alt, #f1f5f9);
+  color: var(--primary, #1b4332);
+}
+
+.org-feedback-author-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.org-feedback-author-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.org-feedback-submission-date {
+  font-size: 0.75rem;
+  color: var(--text-light, #64748b);
+}
+
+.org-feedback-overall-score-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 4px 8px;
+  border-radius: var(--radius-full, 9999px);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.org-feedback-score-digit {
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+/* Trek Context Line */
+.org-feedback-trek-context {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  padding: 8px 12px;
+  background: var(--bg-surface-alt, #f8fafc);
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid #f1f5f9;
+}
+
+.org-feedback-context-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--text-muted, #475569);
+}
+
+.org-feedback-context-icon {
+  color: var(--text-light, #94a3b8);
+  flex-shrink: 0;
+}
+
+.org-feedback-context-text--bold {
+  font-weight: 600;
+  color: var(--text-main, #0f172a);
+}
+
+/* Rating Badges Row */
+.org-feedback-ratings-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.org-feedback-rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--bg-surface-alt, #f1f5f9);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-full, 9999px);
+  padding: 3px 8px;
+  font-size: 0.75rem;
+}
+
+.org-feedback-badge-icon {
+  color: var(--primary-accent, #2d6a4f);
+}
+
+.org-feedback-badge-label {
+  color: var(--text-muted, #475569);
+  font-weight: 500;
+}
+
+.org-feedback-badge-val {
+  color: var(--text-main, #0f172a);
+  font-weight: 700;
+}
+
+/* Comment Container */
+.org-feedback-comment-container {
+  margin-top: 0.15rem;
+}
+
+.org-feedback-comment-quote {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--text-main, #1e293b);
+  font-style: italic;
+  background: #fafaf9;
+  border-left: 3px solid var(--primary-accent, #2d6a4f);
+  padding: 8px 12px;
+  border-radius: 0 var(--radius-sm, 4px) var(--radius-sm, 4px) 0;
+  word-break: break-word;
+}
+
+.org-feedback-no-comment {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-light, #94a3b8);
+  font-style: italic;
+}
+
+/* ==========================================================================
+   Stars Display Helper
+   ========================================================================== */
+
+.org-feedback-stars-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.org-feedback-star-icon--filled {
+  color: #f59e0b;
+}
+
+.org-feedback-star-icon--empty {
+  color: #cbd5e1;
+}
+
+/* ==========================================================================
+   Empty States
+   ========================================================================== */
+
+.org-feedback-empty-state {
+  box-sizing: border-box;
+  background: var(--bg-surface, #ffffff);
+  border: 1px dashed var(--border-color, #cbd5e1);
+  border-radius: var(--radius-lg, 12px);
+  padding: 3rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.org-feedback-empty-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--bg-surface-alt, #f8fafc);
+  color: var(--text-light, #94a3b8);
+  margin-bottom: 0.25rem;
+}
+
+.org-feedback-empty-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.org-feedback-empty-desc {
+  margin: 0;
+  max-width: 440px;
+  font-size: 0.85rem;
+  color: var(--text-muted, #64748b);
+  line-height: 1.5;
+}
+
+.org-feedback-empty-reset-btn {
+  margin-top: 0.75rem;
+}
+
+/* ==========================================================================
+   5. Pagination Controls
+   ========================================================================== */
+
+.org-feedback-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.org-feedback-page-btn {
+  font-size: 0.82rem;
+  padding: 6px 14px;
+}
+
+.org-feedback-page-indicator {
+  font-size: 0.82rem;
+  color: var(--text-muted, #475569);
+}
+
+/* ==========================================================================
+   Skeletons
+   ========================================================================== */
+
+.org-feedback-card--skeleton {
+  min-height: 140px;
+  background: #f8fafc;
+  border-style: dashed;
+}
+
+.org-feedback-skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.org-feedback-skeleton-text {
+  width: 70px;
+  height: 28px;
+}
+
+.org-feedback-skeleton-title {
+  width: 50%;
+  height: 16px;
+}
+
+.org-feedback-skeleton-line {
+  width: 80%;
+  height: 12px;
+}
+
+.org-feedback-skeleton-block {
+  width: 100%;
+  height: 48px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

@@ -17,7 +17,11 @@ export const generateCertificate = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Participant ID does not match this booking' });
     }
 
-    if (booking.organizationId.toString() !== req.user.organizationId) {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
+    if (booking.organizationId?.toString() !== req.user.organizationId.toString()) {
       return res.status(403).json({ success: false, message: 'This booking does not belong to your organization' });
     }
 

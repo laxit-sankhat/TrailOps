@@ -7,12 +7,16 @@ import MedicalReview from '../models/MedicalReview.js';
 
 export const getOrgDashboardStats = async (req, res) => {
   try {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
     const organizationId = req.user.organizationId;
 
     const totalTrips = await Trip.countDocuments({ organizationId });
     const totalBookings = await Booking.countDocuments({ organizationId });
     const confirmedBookings = await Booking.countDocuments({ organizationId, status: 'Confirmed' });
-    const totalBatches = await Batch.countDocuments({ organizationId: req.user.organizationId });
+    const totalBatches = await Batch.countDocuments({ organizationId });
 
     res.status(200).json({
       success: true,
@@ -49,7 +53,7 @@ export const getBatchComplianceReport = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Batch not found' });
     }
 
-    if (req.user.role !== 'SuperAdmin' && batch.organizationId?.toString() !== req.user.organizationId) {
+    if (req.user.role !== 'SuperAdmin' && batch.organizationId?.toString() !== req.user?.organizationId?.toString()) {
       return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
     }
 

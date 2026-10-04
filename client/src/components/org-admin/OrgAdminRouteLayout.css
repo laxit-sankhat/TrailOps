@@ -1,0 +1,114 @@
+.org-admin-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.org-admin-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.org-admin-route-content {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 2rem clamp(1rem, 3vw, 3rem) 4rem;
+}
+
+.org-admin-route-heading {
+  margin-bottom: 1.5rem;
+}
+
+.org-admin-route-heading h1 {
+  margin: 0.25rem 0 0.5rem;
+}
+
+.org-admin-route-heading p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.org-admin-route-eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--primary-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.org-admin-route-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 1rem;
+}
+
+.org-admin-route-card {
+  min-width: 0;
+  padding: 1.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.org-admin-route-card h2,
+.org-admin-route-card h3 {
+  margin-top: 0;
+}
+
+.org-admin-route-card p:last-child {
+  margin-bottom: 0;
+}
+
+.org-admin-route-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.org-admin-route-list-item {
+  padding: 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.org-admin-route-list-item p {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+}
+
+.org-admin-route-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.org-admin-route-actions .btn {
+  text-decoration: none;
+}
+
+.org-admin-route-message {
+  color: var(--text-muted);
+}
+
+.org-admin-route-error {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--error-border);
+  border-radius: var(--radius-md);
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+@media (max-width: 768px) {
+  .org-admin-layout {
+    flex-direction: column;
+  }
+
+  .org-admin-route-content {
+    padding: 1.5rem 1rem 3rem;
+  }
+}

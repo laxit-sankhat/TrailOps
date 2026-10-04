@@ -4,7 +4,7 @@ import { createBatchAssignment, removeBatchAssignment, getMyBatchAssignments, ge
 
 const router = express.Router();
 
-router.get('/my', verifyToken, restrictTo('TrekLeader', 'Volunteer'), getMyBatchAssignments);
+router.get('/my', verifyToken, restrictTo('TrekLeader', 'Volunteer', 'MedicalOfficer'), getMyBatchAssignments);
 
 router.get('/batch/:batchId', verifyToken, restrictTo('OrgAdmin'), getAssignmentsForBatch);
 

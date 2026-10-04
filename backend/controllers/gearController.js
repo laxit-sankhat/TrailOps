@@ -4,6 +4,10 @@ import Batch from '../models/Batch.js';
 
 export const createGearItem = async (req, res) => {
   try {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
     const {
       name, category, quantity, condition,
       dailyLateFeeRate, minorDamageFee, moderateDamageFee, severeDamageFee, lostItemFee
@@ -31,6 +35,10 @@ export const createGearItem = async (req, res) => {
 
 export const allocateGear = async (req, res) => {
   try {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
     const { gearItemId, participantId, batchId, expectedReturnDate } = req.body;
 
     const gearItem = await GearItem.findById(gearItemId);
@@ -38,13 +46,17 @@ export const allocateGear = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Gear item not found' });
     }
 
-    if (gearItem.organizationId.toString() !== req.user.organizationId) {
+    if (gearItem.organizationId.toString() !== req.user.organizationId.toString()) {
       return res.status(403).json({ success: false, message: 'This gear item does not belong to your organization' });
     }
 
     const batch = await Batch.findById(batchId);
     if (!batch) {
       return res.status(404).json({ success: false, message: 'Batch not found' });
+    }
+
+    if (batch.organizationId.toString() !== req.user.organizationId.toString()) {
+      return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
     }
 
     if (batch.status === 'Completed') {
@@ -74,8 +86,34 @@ export const allocateGear = async (req, res) => {
   }
 };
 
+export const getGearItemById = async (req, res) => {
+  try {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
+    const gearItem = await GearItem.findById(req.params.id);
+    if (!gearItem) {
+      return res.status(404).json({ success: false, message: 'Gear item not found' });
+    }
+
+    if (gearItem.organizationId.toString() !== req.user.organizationId.toString()) {
+      return res.status(403).json({ success: false, message: 'This gear item does not belong to your organization' });
+    }
+
+    res.status(200).json({ success: true, gearItem });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 export const returnGear = async (req, res) => {
   try {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
     const { conditionOnReturn } = req.body;
 
     const allocation = await GearAllocation.findById(req.params.id);
@@ -84,7 +122,11 @@ export const returnGear = async (req, res) => {
     }
 
     const gearItem = await GearItem.findById(allocation.gearItemId);
-    if (gearItem.organizationId.toString() !== req.user.organizationId) {
+    if (!gearItem) {
+      return res.status(404).json({ success: false, message: 'Associated gear item not found' });
+    }
+
+    if (gearItem.organizationId.toString() !== req.user.organizationId.toString()) {
       return res.status(403).json({ success: false, message: 'This gear allocation does not belong to your organization' });
     }
 
@@ -114,10 +156,6 @@ export const returnGear = async (req, res) => {
     } else if (conditionOnReturn === 'Severe') {
       fineAmount += gearItem.severeDamageFee;
       fineReason = fineReason === 'None' ? 'SevereDamage' : fineReason;
-      // Lost items REPLACE the fine entirely rather than adding to it - a lost item
-      // can't also be "returned late," so charging both would double-penalize.
-      // Every other damage tier is additive with lateness, since a damaged-but-
-      // returned item can genuinely be both late AND damaged.
     } else if (conditionOnReturn === 'Lost') {
       fineAmount = gearItem.lostItemFee; // lost overrides everything - full replacement, not additive
       fineReason = 'Lost';
@@ -138,10 +176,14 @@ export const returnGear = async (req, res) => {
 
 export const removeGearItem = async (req, res) => {
   try {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
     const gearItem = await GearItem.findById(req.params.id);
     if (!gearItem) return res.status(404).json({ success: false, message: 'Gear item not found' });
 
-    if (gearItem.organizationId.toString() !== req.user.organizationId) {
+    if (gearItem.organizationId.toString() !== req.user.organizationId.toString()) {
       return res.status(403).json({ success: false, message: 'This gear item does not belong to your organization' });
     }
 
@@ -157,6 +199,10 @@ export const removeGearItem = async (req, res) => {
 
 export const getMyOrgGear = async (req, res) => {
   try {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
     const gearItems = await GearItem.find({
       organizationId: req.user.organizationId,
       availabilityStatus: 'Active'
@@ -170,6 +216,10 @@ export const getMyOrgGear = async (req, res) => {
 
 export const getMyOrgAllocations = async (req, res) => {
   try {
+    if (!req.user?.organizationId) {
+      return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
     const gearItems = await GearItem.find({ organizationId: req.user.organizationId }).select('_id');
     const allocations = await GearAllocation.find({
       gearItemId: { $in: gearItems.map((gearItem) => gearItem._id) },

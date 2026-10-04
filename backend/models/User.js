@@ -3,7 +3,10 @@ const {Schema, model} = mongoose;
 
 const userSchema = new Schema(
     {
+        // Basic user information
         fullName: { type: String, required: true },
+
+        // Email is unique and normalized
         email: {
             type: String,
             required: true,
@@ -12,8 +15,12 @@ const userSchema = new Schema(
             trim: true,
             match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address']
         },
+
         mobileNumber: { type: String },
+
+        // Stores HASHED password, never the actual password
         passwordHash: { type: String, required: true },
+
         address: { type: String },
         dob: { type: Date },
         profilePicture: { type: String },
@@ -38,6 +45,8 @@ const userSchema = new Schema(
             required: true
         },
 
+        // Password-reset security fields
+        // Actual reset token is NOT stored; only its hash is stored
         resetTokenHash: { type: String, default: null },
         resetTokenExpiresAt: { type: Date, default: null },
 
@@ -52,8 +61,10 @@ const userSchema = new Schema(
         availability: Boolean
 
     },
+    // Automatically adds createdAt and updatedAt
     { timestamps: true }
 );
 
+// Creates the MongoDB "users" collection through Mongoose
 const User = model('User', userSchema);
 export default User;

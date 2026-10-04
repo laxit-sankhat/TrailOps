@@ -1,0 +1,622 @@
+/* ==========================================================================
+   TrailOps OrgAdmin Staff Page Styling
+   Field operations and team command center directory
+   ========================================================================== */
+
+.org-admin-staff-page {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* ==========================================================================
+   1. Page Header & Primary Actions Row
+   ========================================================================== */
+
+.org-admin-staff-header-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
+.org-admin-staff-header-actions {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ==========================================================================
+   2. Staff KPI Summary (Command Row)
+   Desktop: 5 columns
+   Tablet: 2 columns
+   Mobile: 1 column
+   ========================================================================== */
+
+.org-admin-staff-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 2.25rem;
+}
+
+@media (max-width: 1080px) {
+  .org-admin-staff-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 580px) {
+  .org-admin-staff-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.org-admin-staff-kpi-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8e4);
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 4px rgb(20 36 27 / 3%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.org-admin-staff-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgb(20 36 27 / 6%);
+  border-color: #cbdad1;
+}
+
+.org-admin-staff-kpi-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-light, #778c7f);
+  letter-spacing: 0.05em;
+}
+
+.org-admin-staff-kpi-value-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 0 2px;
+}
+
+.org-admin-staff-kpi-value {
+  font-size: 1.45rem;
+  font-weight: 750;
+  color: var(--text-main, #14241b);
+}
+
+.org-admin-staff-kpi-icon {
+  color: var(--primary-accent, #467656);
+}
+
+.org-admin-staff-kpi-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted, #52665a);
+}
+
+/* Role Icon Color Accents */
+.role-icon-leader {
+  color: #24543a !important;
+}
+
+.role-icon-medic {
+  color: #0d766e !important;
+}
+
+.role-icon-volunteer {
+  color: #b45309 !important;
+}
+
+.role-icon-coordinator {
+  color: #2563eb !important;
+}
+
+/* ==========================================================================
+   3. Assign Staff & Add Staff Form Drawers
+   ========================================================================== */
+
+.org-admin-page-form-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8e4);
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgb(20 36 27 / 5%);
+}
+
+.org-admin-page-form-card h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.25rem;
+  font-weight: 750;
+  color: var(--text-main, #14241b);
+}
+
+.org-admin-form-subtitle {
+  margin: 0 0 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-muted, #52665a);
+}
+
+.org-admin-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+/* ==========================================================================
+   4. Role Grouped Sections
+   ========================================================================== */
+
+.org-admin-staff-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2.75rem;
+}
+
+.org-admin-staff-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.org-admin-staff-section-header {
+  margin-bottom: 1.25rem;
+}
+
+.org-admin-staff-section-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.org-admin-staff-section-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main, #14241b);
+  letter-spacing: -0.01em;
+}
+
+.org-admin-staff-section-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--primary-light, #eaf2ec);
+  color: var(--primary, #24543a);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.org-admin-staff-section-desc {
+  margin: 0.3rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted, #52665a);
+}
+
+/* ==========================================================================
+   5. Staff Card Grid & Cards
+   ========================================================================== */
+
+.org-admin-staff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.25rem;
+}
+
+.org-admin-staff-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8e4);
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 4px rgb(20 36 27 / 3%);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.org-admin-staff-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgb(20 36 27 / 7%);
+  border-color: #cbdad1;
+}
+
+.org-admin-staff-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+/* Avatar styling with role-based colors */
+.org-admin-staff-avatar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  user-select: none;
+}
+
+.org-admin-staff-avatar.role-trekleader {
+  background: #eaf2ec;
+  color: #24543a;
+  border: 1px solid rgba(36, 84, 58, 0.15);
+}
+
+.org-admin-staff-avatar.role-medicalofficer {
+  background: #e6f4f2;
+  color: #0d766e;
+  border: 1px solid rgba(13, 118, 110, 0.15);
+}
+
+.org-admin-staff-avatar.role-volunteer {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid rgba(180, 83, 9, 0.15);
+}
+
+.org-admin-staff-avatar.role-tripcoordinator {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.15);
+}
+
+.org-admin-staff-avatar.role-staff {
+  background: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+}
+
+/* Identity block */
+.org-admin-staff-card__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.org-admin-staff-name {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-main, #14241b);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.org-admin-staff-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--text-muted, #52665a);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.org-admin-staff-email svg {
+  flex-shrink: 0;
+  color: var(--text-light, #778c7f);
+}
+
+/* Meta: Role & Status badges */
+.org-admin-staff-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border-color, #edf2ef);
+}
+
+.org-admin-staff-role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.role-badge-trekleader {
+  background: #eaf2ec;
+  color: #24543a;
+  border: 1px solid rgba(36, 84, 58, 0.15);
+}
+
+.role-badge-medicalofficer {
+  background: #e6f4f2;
+  color: #0d766e;
+  border: 1px solid rgba(13, 118, 110, 0.15);
+}
+
+.role-badge-volunteer {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid rgba(180, 83, 9, 0.15);
+}
+
+.role-badge-tripcoordinator {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.15);
+}
+
+.org-admin-staff-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f0fdf4;
+  color: #166534;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid rgba(22, 101, 52, 0.15);
+}
+
+.org-admin-staff-status-badge::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.org-admin-staff-status-badge.status-inactive {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid rgba(153, 27, 27, 0.2);
+}
+
+.org-admin-staff-status-badge.status-inactive::before {
+  background: #ef4444;
+}
+
+/* Card footer CTA */
+.org-admin-staff-card__footer {
+  margin-top: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.org-admin-staff-view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex: 1;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  background: #f7faf8;
+  color: var(--primary, #24543a);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #e2e8e4);
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.org-admin-staff-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.org-admin-staff-action-btn.btn-deactivate {
+  background: #fff5f5;
+  color: #c53030;
+  border: 1px solid #feb2b2;
+}
+
+.org-admin-staff-action-btn.btn-deactivate:hover:not(:disabled) {
+  background: #fed7d7;
+  color: #9b2c2c;
+  border-color: #fc8181;
+}
+
+.org-admin-staff-action-btn.btn-reactivate {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.org-admin-staff-action-btn.btn-reactivate:hover:not(:disabled) {
+  background: #dcfce7;
+  color: #14532d;
+  border-color: #86efac;
+}
+
+.org-admin-staff-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.org-admin-staff-view-btn:hover {
+  background: var(--primary-light, #eaf2ec);
+  border-color: #cbdad1;
+  color: var(--primary-accent, #1d4530);
+}
+
+/* ==========================================================================
+   6. Loading Skeleton & Empty States
+   ========================================================================== */
+
+@keyframes staffSkeletonShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-box {
+  background: linear-gradient(90deg, #edf2ee 25%, #f7faf8 50%, #edf2ee 75%);
+  background-size: 200% 100%;
+  animation: staffSkeletonShimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+.org-admin-staff-kpi-card--skeleton {
+  pointer-events: none;
+}
+
+.skeleton-kpi-label {
+  width: 55%;
+  height: 12px;
+  margin-bottom: 8px;
+}
+
+.skeleton-kpi-value {
+  width: 40%;
+  height: 26px;
+  margin-bottom: 8px;
+}
+
+.skeleton-kpi-sub {
+  width: 75%;
+  height: 12px;
+}
+
+.org-admin-staff-loading-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.25rem;
+}
+
+.org-admin-staff-card--skeleton {
+  pointer-events: none;
+  border: 1px dashed var(--border-color, #e2e8e4);
+  box-shadow: none;
+}
+
+.skeleton-staff-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.skeleton-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.skeleton-staff-id {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeleton-name {
+  width: 65%;
+  height: 14px;
+}
+
+.skeleton-email {
+  width: 85%;
+  height: 12px;
+}
+
+.skeleton-badge {
+  width: 50%;
+  height: 18px;
+  border-radius: 999px;
+  margin-bottom: 1rem;
+}
+
+.skeleton-btn {
+  width: 100%;
+  height: 32px;
+  border-radius: 8px;
+}
+
+/* Empty State Card */
+.org-admin-staff-empty-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px dashed var(--border-color, #cbdad1);
+  border-radius: 16px;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.org-admin-staff-empty-card svg {
+  color: var(--primary-accent, #467656);
+  opacity: 0.65;
+}
+
+.org-admin-staff-empty-card h3 {
+  margin: 0.25rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main, #14241b);
+}
+
+.org-admin-staff-empty-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted, #52665a);
+  max-width: 460px;
+}
+
+/* ==========================================================================
+   7. Responsive adjustments
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .org-admin-staff-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .org-admin-staff-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .org-admin-staff-loading-grid {
+    grid-template-columns: 1fr;
+  }
+}

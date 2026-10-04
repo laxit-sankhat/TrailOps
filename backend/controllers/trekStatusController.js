@@ -61,7 +61,7 @@ export const getTrekStatusHistory = async (req, res) => {
     }
     // Add real scoping - e.g. Participant must have an actual booking in this batch,
     // staff must belong to the batch's org. For now, minimum fix: block cross-org access.
-    else if (req.user.role !== 'SuperAdmin' && batch.organizationId?.toString() !== req.user.organizationId) {
+    else if (req.user.role !== 'SuperAdmin' && batch.organizationId?.toString() !== req.user?.organizationId?.toString()) {
       return res.status(403).json({ success: false, message: 'This batch does not belong to your organization' });
     }
 

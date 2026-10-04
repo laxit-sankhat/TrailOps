@@ -6,6 +6,8 @@ import RefreshToken from "../models/RefreshToken.js";
 import crypto from 'crypto';
 import { isPasswordValid } from '../utils/validators.js';
 
+const ORG_SCOPED_ROLES = ['OrgAdmin', 'TripCoordinator', 'MedicalOfficer', 'TrekLeader'];
+
 //creates AccessToken
 const issueAccessToken = (user, organizationId) => {
     return jwt.sign(
@@ -61,10 +63,30 @@ export const login = async (req, res) => {
 
         //Assigns Appropriate OrganizationId
         let organizationId = null;
-        const membership = await OrganizationMembership.findOne({ userId: user._id });
 
-        if (membership) {
+        if (ORG_SCOPED_ROLES.includes(user.role)) {
+            const membership = await OrganizationMembership.findOne({
+                userId: user._id,
+                status: 'Active'
+            });
+
+            if (!membership) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Your organization membership is inactive or has been revoked."
+                });
+            }
+
             organizationId = membership.organizationId;
+        } else {
+            const membership = await OrganizationMembership.findOne({
+                userId: user._id,
+                status: 'Active'
+            });
+
+            if (membership) {
+                organizationId = membership.organizationId;
+            }
         }
 
         //Calls for Token creation
@@ -150,10 +172,30 @@ export const refresh = async (req, res) => {
         }
 
         let organizationId = null;
-        const membership = await OrganizationMembership.findOne({ userId: user._id });
 
-        if (membership) {
+        if (ORG_SCOPED_ROLES.includes(user.role)) {
+            const membership = await OrganizationMembership.findOne({
+                userId: user._id,
+                status: 'Active'
+            });
+
+            if (!membership) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Your organization membership is inactive or has been revoked."
+                });
+            }
+
             organizationId = membership.organizationId;
+        } else {
+            const membership = await OrganizationMembership.findOne({
+                userId: user._id,
+                status: 'Active'
+            });
+
+            if (membership) {
+                organizationId = membership.organizationId;
+            }
         }
         //At last Creating Access token after Successful RefeshToken's Validation
         const newAccessToken = issueAccessToken(user, organizationId);
@@ -223,8 +265,7 @@ export const requestPasswordReset = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Reset token generated (would normally be emailed)',
-      resetToken: rawToken // for testing only - a real system would email this, never return it
+      message: 'Reset token generated (would normally be emailed)'
     });
   } catch (err) {
     console.error(err);

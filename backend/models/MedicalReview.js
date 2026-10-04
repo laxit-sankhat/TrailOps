@@ -9,7 +9,7 @@ const medicalReviewSchema = new Schema(
         medicalReviewerId: { type: Schema.Types.ObjectId, ref: 'User' },
         status: {
             type: String,
-            enum: ['Pending', 'Approved', 'Rejected', 'NeedsMoreInfo'],
+            enum: ['Pending', 'Approved', 'Rejected', 'NeedsMoreInfo', 'Cancelled'],
             default: 'Pending'
         },
         notes: { type: String },
@@ -18,6 +18,7 @@ const medicalReviewSchema = new Schema(
 );
 
 medicalReviewSchema.index({ organizationId: 1, status: 1 });
+medicalReviewSchema.index({ bookingId: 1 }, { unique: true });
 
 const MedicalReview = model('MedicalReview', medicalReviewSchema);
 export default MedicalReview;

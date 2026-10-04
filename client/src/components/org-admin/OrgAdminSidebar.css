@@ -1,0 +1,379 @@
+/* ==========================================================================
+   OrgAdminSidebar - Google Classroom-Style Collapsible Hover Sidebar
+   ========================================================================== */
+
+:root {
+  --org-sidebar-collapsed-w: 68px;
+  --org-sidebar-expanded-w: 240px;
+}
+
+/* Base Sidebar Container */
+.org-admin-sidebar {
+  --current-sidebar-w: var(--org-sidebar-collapsed-w);
+  width: var(--current-sidebar-w);
+  min-width: var(--current-sidebar-w);
+  max-width: var(--current-sidebar-w);
+  flex: 0 0 var(--current-sidebar-w);
+  height: 100vh;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 10px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-color);
+  color: var(--text-main);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 90;
+  transition:
+    width 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    min-width 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    max-width 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    flex-basis 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: width, flex-basis;
+}
+
+/* Scrollbar styling - hidden when collapsed, thin when expanded */
+.org-admin-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.org-admin-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.org-admin-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+}
+
+.org-admin-sidebar {
+  scrollbar-width: thin;
+}
+
+/* Desktop Hover & Keyboard Expansion */
+@media (min-width: 769px) {
+  .org-admin-sidebar:hover,
+  .org-admin-sidebar:focus-within {
+    --current-sidebar-w: var(--org-sidebar-expanded-w);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Brand Section */
+.org-admin-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 6px 1.5rem;
+  min-height: 44px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.org-admin-sidebar__brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 1.15rem;
+  box-sizing: border-box;
+}
+
+.org-admin-sidebar__brand-text {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  opacity: 0;
+  max-width: 0;
+  transform: translateX(-6px);
+  pointer-events: none;
+  transition:
+    opacity 180ms ease,
+    transform 200ms ease,
+    max-width 220ms ease;
+}
+
+@media (min-width: 769px) {
+  .org-admin-sidebar:hover .org-admin-sidebar__brand-text,
+  .org-admin-sidebar:focus-within .org-admin-sidebar__brand-text {
+    opacity: 1;
+    max-width: 150px;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+}
+
+/* Navigation Container */
+.org-admin-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1 1 auto;
+}
+
+.org-admin-sidebar__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Section Dividers */
+.org-admin-sidebar__divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 0.45rem 6px;
+  opacity: 0.8;
+  transition: opacity 180ms ease, margin 220ms ease;
+}
+
+@media (min-width: 769px) {
+  .org-admin-sidebar:hover .org-admin-sidebar__divider,
+  .org-admin-sidebar:focus-within .org-admin-sidebar__divider {
+    margin: 0.65rem 6px 0.35rem;
+    opacity: 0.5;
+  }
+}
+
+/* Section Headings */
+.org-admin-sidebar__heading {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  padding: 0 8px;
+  margin: 0;
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 180ms ease,
+    max-height 220ms ease,
+    margin 220ms ease;
+}
+
+@media (min-width: 769px) {
+  .org-admin-sidebar:hover .org-admin-sidebar__heading,
+  .org-admin-sidebar:focus-within .org-admin-sidebar__heading {
+    max-height: 24px;
+    opacity: 1;
+    margin-top: 0.15rem;
+    margin-bottom: 0.35rem;
+    pointer-events: auto;
+  }
+}
+
+.org-admin-sidebar__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Navigation Links */
+.org-admin-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 6px;
+  min-height: 42px;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  text-decoration: none;
+  box-sizing: border-box;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+  position: relative;
+  outline: none;
+}
+
+.org-admin-sidebar__link-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.org-admin-sidebar__link-icon {
+  flex-shrink: 0;
+}
+
+.org-admin-sidebar__link-text {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  opacity: 0;
+  max-width: 0;
+  transform: translateX(-6px);
+  pointer-events: none;
+  transition:
+    opacity 180ms ease,
+    transform 200ms ease,
+    max-width 220ms ease;
+}
+
+@media (min-width: 769px) {
+  .org-admin-sidebar:hover .org-admin-sidebar__link-text,
+  .org-admin-sidebar:focus-within .org-admin-sidebar__link-text {
+    opacity: 1;
+    max-width: 155px;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+}
+
+/* Active & Hover States */
+/* Default (Collapsed): active highlight is on the icon wrapper */
+.org-admin-sidebar__link[aria-current="page"] {
+  color: var(--primary);
+}
+
+.org-admin-sidebar__link[aria-current="page"] .org-admin-sidebar__link-icon-wrap {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.org-admin-sidebar__link:hover {
+  background: var(--bg-surface-alt);
+  color: var(--primary);
+}
+
+.org-admin-sidebar__link:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Expanded state on desktop: whole link pill lights up for active route */
+@media (min-width: 769px) {
+  .org-admin-sidebar:hover .org-admin-sidebar__link[aria-current="page"],
+  .org-admin-sidebar:focus-within .org-admin-sidebar__link[aria-current="page"] {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .org-admin-sidebar:hover .org-admin-sidebar__link[aria-current="page"] .org-admin-sidebar__link-icon-wrap,
+  .org-admin-sidebar:focus-within .org-admin-sidebar__link[aria-current="page"] .org-admin-sidebar__link-icon-wrap {
+    background: transparent;
+    color: var(--primary);
+  }
+}
+
+/* Mobile & Small Screen Responsiveness (<= 768px) */
+@media (max-width: 768px) {
+  .org-admin-sidebar {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: auto;
+    position: static;
+    flex: 0 0 auto;
+    padding: 0.85rem 1rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: none;
+  }
+
+  .org-admin-sidebar__brand {
+    padding: 0 0 0.75rem;
+    min-height: auto;
+  }
+
+  .org-admin-sidebar__brand-text {
+    opacity: 1;
+    max-width: none;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .org-admin-sidebar__nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+
+  .org-admin-sidebar__group {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+  }
+
+  .org-admin-sidebar__divider {
+    display: none;
+  }
+
+  .org-admin-sidebar__heading {
+    display: none;
+  }
+
+  .org-admin-sidebar__links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .org-admin-sidebar__link {
+    padding: 0.4rem 0.65rem;
+    gap: 0.5rem;
+    background: var(--bg-surface-alt);
+    border: 1px solid var(--border-color);
+  }
+
+  .org-admin-sidebar__link-icon-wrap {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+  }
+
+  .org-admin-sidebar__link-text {
+    opacity: 1;
+    max-width: none;
+    transform: none;
+    pointer-events: auto;
+    font-size: 0.82rem;
+  }
+
+  .org-admin-sidebar__link[aria-current="page"] {
+    background: var(--primary-light);
+    border-color: rgba(27, 67, 50, 0.2);
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .org-admin-sidebar__link[aria-current="page"] .org-admin-sidebar__link-icon-wrap {
+    background: transparent;
+  }
+}

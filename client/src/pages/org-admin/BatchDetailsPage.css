@@ -1,0 +1,1078 @@
+/* ==========================================================================
+   OrgAdmin Batch Details Page Styling — Operations Command Center
+   ========================================================================== */
+
+.batch-details-page {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+
+/* ==========================================================================
+   Loading & Error States
+   ========================================================================== */
+
+.org-admin-batch-details-loading {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 80px 20px;
+  text-align: center;
+  color: var(--text-muted, #52665a);
+  font-size: 1rem;
+}
+
+.org-admin-batch-details-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted, #52665a);
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  transition: color 0.15s ease;
+}
+
+.org-admin-batch-details-back:hover {
+  color: var(--primary, #24543a);
+}
+
+.org-admin-batch-details-error {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--error-border, #fca5a5);
+  border-radius: var(--radius-md, 8px);
+  background: var(--error-bg, #fef2f2);
+  color: var(--error-text, #991b1b);
+  margin: 0;
+}
+
+/* ==========================================================================
+   1. Breadcrumbs
+   ========================================================================== */
+
+.org-admin-batch-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted, #52665a);
+}
+
+.org-admin-batch-breadcrumb-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted, #52665a);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.org-admin-batch-breadcrumb-back:hover,
+.org-admin-batch-breadcrumb-link:hover {
+  color: var(--primary, #24543a);
+}
+
+.org-admin-batch-breadcrumb-link {
+  color: var(--text-muted, #52665a);
+  text-decoration: none;
+}
+
+.org-admin-batch-breadcrumb-sep {
+  color: var(--border-color, #cfd8d2);
+}
+
+.org-admin-batch-breadcrumb-current {
+  color: var(--text-main, #14241b);
+  font-weight: 650;
+}
+
+/* ==========================================================================
+   2. Hero Header Card
+   ========================================================================== */
+
+.org-admin-batch-hero {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8e4);
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgb(20 36 27 / 4%);
+  overflow: hidden;
+}
+
+.org-admin-batch-hero__inner {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  min-height: 190px;
+}
+
+.org-admin-batch-hero__content {
+  flex: 1;
+  min-width: 0;
+  padding: clamp(20px, 3vw, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+}
+
+.org-admin-batch-hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary-accent, #467656);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.org-admin-batch-hero__trip-link {
+  color: var(--primary-accent, #467656);
+  text-decoration: none;
+}
+
+.org-admin-batch-hero__trip-link:hover {
+  text-decoration: underline;
+}
+
+.org-admin-batch-hero__location {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted, #52665a);
+  font-weight: 500;
+  margin-left: 6px;
+  padding-left: 8px;
+  border-left: 1px solid var(--border-color, #e2e8e4);
+}
+
+.org-admin-batch-hero__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.org-admin-batch-hero__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.2vw, 1.95rem);
+  font-weight: 750;
+  color: var(--text-main, #14241b);
+  line-height: 1.25;
+}
+
+.org-admin-batch-details-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.status-open {
+  background: rgba(255, 247, 230, 0.95);
+  color: #855b13;
+  border: 1px solid #f2d59a;
+}
+
+.status-full {
+  background: rgba(254, 243, 199, 0.95);
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.status-scheduled {
+  background: rgba(237, 247, 239, 0.95);
+  color: #28633b;
+  border: 1px solid #b9ddc4;
+}
+
+.status-completed {
+  background: rgba(240, 243, 241, 0.95);
+  color: #4a5d51;
+  border: 1px solid #cfd8d2;
+}
+
+.status-cancelled {
+  background: rgba(255, 241, 240, 0.95);
+  color: #9a3833;
+  border: 1px solid #edc4c2;
+}
+
+.org-admin-batch-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  color: var(--text-muted, #52665a);
+  font-size: 0.88rem;
+  font-weight: 550;
+  margin-top: 2px;
+}
+
+.org-admin-batch-hero__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.org-admin-batch-hero__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.btn-outline-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #fff7e6;
+  color: #855b13;
+  border: 1px solid #f2d59a;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-warning:hover {
+  background: #fde8be;
+  color: #614006;
+  border-color: #e5be70;
+}
+
+/* Visual Trip Backdrop */
+.org-admin-batch-hero__visual {
+  position: relative;
+  width: 320px;
+  min-width: 240px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.org-admin-batch-hero__visual-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.org-admin-batch-hero__visual-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 100%);
+}
+
+/* ==========================================================================
+   3. Operational KPI Section
+   ========================================================================== */
+
+.org-admin-batch-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 1200px) {
+  .org-admin-batch-kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .org-admin-batch-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .org-admin-batch-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.org-admin-batch-kpi-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8e4);
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 4px rgb(20 36 27 / 3%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.org-admin-batch-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgb(20 36 27 / 6%);
+}
+
+.org-admin-batch-kpi-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-light, #778c7f);
+  letter-spacing: 0.05em;
+}
+
+.org-admin-batch-kpi-value-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 0 2px;
+}
+
+.org-admin-batch-kpi-value {
+  font-size: 1.45rem;
+  font-weight: 750;
+  color: var(--text-main, #14241b);
+}
+
+.kpi-denom {
+  font-size: 0.95rem;
+  font-weight: 550;
+  color: var(--text-muted, #52665a);
+}
+
+.org-admin-batch-kpi-icon {
+  color: var(--primary-accent, #467656);
+}
+
+.org-admin-batch-kpi-icon.icon-success {
+  color: #28633b;
+}
+
+.org-admin-batch-kpi-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-body, #f7f8f6);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 4px 0;
+}
+
+.org-admin-batch-kpi-bar-fill {
+  height: 100%;
+  background: var(--primary, #24543a);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.org-admin-batch-kpi-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted, #52665a);
+}
+
+/* ==========================================================================
+   Common Section Hierarchy
+   ========================================================================== */
+
+.org-admin-batch-details-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.org-admin-batch-details-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.org-admin-batch-details-section-heading h2 {
+  margin: 0;
+  color: var(--text-main, #14241b);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.org-admin-batch-details-section-desc {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted, #52665a);
+}
+
+.org-admin-route-eyebrow {
+  margin: 0 0 4px;
+  color: var(--primary-accent, #467656);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   4. Field Team Section
+   ========================================================================== */
+
+.org-admin-batch-team-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.org-admin-batch-team-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.org-admin-batch-team-group__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.org-admin-batch-team-group__header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main, #14241b);
+}
+
+.role-icon-leader {
+  color: #24543a;
+}
+
+.role-icon-medic {
+  color: #0d766e;
+}
+
+.role-icon-volunteer {
+  color: #b45309;
+}
+
+.org-admin-batch-details-staff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 14px;
+}
+
+.org-admin-batch-staff-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8e4);
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgb(20 36 27 / 3%);
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.org-admin-batch-staff-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgb(20 36 27 / 6%);
+  border-color: #cfdcd2;
+}
+
+.org-admin-batch-staff-avatar {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.org-admin-batch-staff-avatar.role-leader {
+  background: #eaf2ec;
+  color: #24543a;
+}
+
+.org-admin-batch-staff-avatar.role-medic {
+  background: #e6f4f2;
+  color: #0d766e;
+}
+
+.org-admin-batch-staff-avatar.role-volunteer {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.org-admin-batch-staff-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  gap: 3px;
+}
+
+.org-admin-batch-staff-pill {
+  display: inline-flex;
+  width: fit-content;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.role-leader-pill {
+  background: #eaf2ec;
+  color: #24543a;
+}
+
+.role-medic-pill {
+  background: #e6f4f2;
+  color: #0d766e;
+}
+
+.role-volunteer-pill {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.org-admin-batch-staff-info h4 {
+  margin: 2px 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main, #14241b);
+}
+
+.staff-email {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted, #52665a);
+  overflow-wrap: anywhere;
+}
+
+.org-admin-batch-supervisor-note {
+  margin: 6px 0 0;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-color, #e2e8e4);
+  font-size: 0.78rem;
+  color: var(--text-muted, #52665a);
+}
+
+.org-admin-batch-staff-remove {
+  background: transparent;
+  border: none;
+  color: var(--text-light, #778c7f);
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.org-admin-batch-staff-remove:hover {
+  color: #9a3833;
+  background: #fff1f0;
+}
+
+/* Team Empty State */
+.org-admin-batch-team-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: var(--bg-surface, #ffffff);
+  border: 1px dashed var(--border-color, #d8dfda);
+  border-radius: 14px;
+  color: var(--text-muted, #52665a);
+}
+
+.org-admin-batch-team-empty svg {
+  color: var(--primary-accent, #467656);
+  margin-bottom: 0.5rem;
+}
+
+.org-admin-batch-team-empty h3 {
+  margin: 0 0 0.4rem;
+  color: var(--text-main, #14241b);
+  font-size: 1.15rem;
+}
+
+.org-admin-batch-team-empty p {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  max-width: 420px;
+}
+
+/* ==========================================================================
+   5. Participants Section
+   ========================================================================== */
+
+.org-admin-batch-participants-table-wrap {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8e4);
+  border-radius: 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 1px 4px rgb(20 36 27 / 3%);
+}
+
+.org-admin-batch-participants-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.org-admin-batch-participants-table th {
+  background: var(--bg-body, #f7f8f6);
+  padding: 12px 18px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted, #52665a);
+  border-bottom: 1px solid var(--border-color, #e2e8e4);
+}
+
+.org-admin-batch-participants-table td {
+  padding: 14px 18px;
+  font-size: 0.88rem;
+  border-bottom: 1px solid var(--border-color, #e2e8e4);
+  color: var(--text-main, #14241b);
+  vertical-align: middle;
+}
+
+.org-admin-batch-participants-table tr:last-child td {
+  border-bottom: none;
+}
+
+.org-admin-batch-participants-table tr:hover td {
+  background: #fafbfa;
+}
+
+.participant-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.participant-avatar {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--primary-light, #eaf2ec);
+  color: var(--primary, #24543a);
+  flex: 0 0 auto;
+}
+
+.participant-fullname {
+  font-weight: 600;
+}
+
+.participant-contact-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.82rem;
+}
+
+.contact-email {
+  color: var(--text-main, #14241b);
+}
+
+.contact-phone {
+  color: var(--text-muted, #52665a);
+}
+
+/* Booking Status Badges */
+.org-admin-booking-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.status-confirmed,
+.status-medicallyapproved {
+  background: #edf7ef;
+  color: #28633b;
+  border: 1px solid #b9ddc4;
+}
+
+.status-pendingmedicalreview,
+.status-waitlisted {
+  background: #fff7e6;
+  color: #855b13;
+  border: 1px solid #f2d59a;
+}
+
+.status-cancelled,
+.status-rejected {
+  background: #fff1f0;
+  color: #9a3833;
+  border: 1px solid #edc4c2;
+}
+
+.status-inquiry,
+.status-draft {
+  background: #f4f6f4;
+  color: #52665a;
+  border: 1px solid #e2e8e4;
+}
+
+/* ==========================================================================
+   6. Operations Grid (Attendance & Checkpoints)
+   ========================================================================== */
+
+.org-admin-batch-ops-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 820px) {
+  .org-admin-batch-ops-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.org-admin-batch-card-ops {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8e4);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 1px 4px rgb(20 36 27 / 3%);
+}
+
+.org-admin-batch-card-ops__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ops-icon-wrap {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 10px;
+  flex: 0 0 auto;
+}
+
+.icon-attendance {
+  background: #eaf2ec;
+  color: #24543a;
+}
+
+.icon-checkpoints {
+  background: #e6f4f2;
+  color: #0d766e;
+}
+
+.org-admin-batch-card-ops__header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main, #14241b);
+}
+
+.org-admin-batch-card-ops__header p {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted, #52665a);
+}
+
+.org-admin-batch-info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px dashed var(--border-color, #d8dfda);
+  border-radius: 10px;
+  background: var(--bg-body, #f7f8f6);
+}
+
+.info-box-icon {
+  color: var(--primary-accent, #467656);
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+.org-admin-batch-info-box strong {
+  display: block;
+  font-size: 0.86rem;
+  color: var(--text-main, #14241b);
+  margin-bottom: 3px;
+}
+
+.org-admin-batch-info-box p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-muted, #52665a);
+}
+
+/* ==========================================================================
+   7. Gear Allocation
+   ========================================================================== */
+
+.org-admin-batch-gear-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.org-admin-batch-gear-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8e4);
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.org-admin-batch-gear-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgb(20 36 27 / 5%);
+}
+
+.gear-icon-box {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 8px;
+  background: #eaf2ec;
+  color: #24543a;
+  flex: 0 0 auto;
+}
+
+.gear-card-body h4 {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-main, #14241b);
+}
+
+.gear-assigned,
+.gear-return {
+  margin: 3px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted, #52665a);
+}
+
+/* Common Empty Card */
+.org-admin-batch-empty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.2rem 1.5rem;
+  background: var(--bg-surface, #ffffff);
+  border: 1px dashed var(--border-color, #d8dfda);
+  border-radius: 14px;
+  color: var(--text-muted, #52665a);
+}
+
+.org-admin-batch-empty-card svg {
+  color: var(--text-light, #778c7f);
+  margin-bottom: 0.4rem;
+}
+
+.org-admin-batch-empty-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main, #14241b);
+}
+
+.empty-sub {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: var(--text-muted, #52665a);
+}
+
+/* ==========================================================================
+   8. Safety: Incidents & SOS Alerts
+   ========================================================================== */
+
+.org-admin-batch-safe-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: #f8faf8;
+  border: 1px solid #d4e5d8;
+  border-radius: 14px;
+  color: var(--text-muted, #52665a);
+}
+
+.org-admin-batch-safe-card svg {
+  color: #28633b;
+  margin-bottom: 0.5rem;
+}
+
+.org-admin-batch-safe-card h3 {
+  margin: 0 0 0.3rem;
+  color: #1b492b;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.org-admin-batch-safe-card p {
+  margin: 0;
+  font-size: 0.88rem;
+  max-width: 440px;
+}
+
+.org-admin-batch-safety-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.org-admin-batch-sos-list,
+.org-admin-batch-incident-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.org-admin-batch-sos-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: #fff8f7;
+  border: 1px solid #fbdcd9;
+  border-radius: 12px;
+}
+
+.sos-alert-icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 50%;
+  background: #fee2e2;
+  color: #dc2626;
+  flex: 0 0 auto;
+}
+
+.sos-alert-content {
+  flex: 1;
+}
+
+.sos-alert-content h4 {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main, #14241b);
+}
+
+.sos-alert-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sos-date {
+  font-size: 0.78rem;
+  color: var(--text-muted, #52665a);
+}
+
+.org-admin-batch-incident-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8e4);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgb(20 36 27 / 3%);
+}
+
+.org-admin-batch-incident-card header h4 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main, #14241b);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color, #e2e8e4);
+}
+
+.org-admin-batch-incident-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-lbl {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-light, #778c7f);
+  letter-spacing: 0.05em;
+}
+
+.org-admin-batch-incident-fields p {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-main, #14241b);
+  white-space: pre-wrap;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .org-admin-batch-hero__inner {
+    flex-direction: column;
+  }
+
+  .org-admin-batch-hero__visual {
+    width: 100%;
+    height: 140px;
+  }
+
+  .org-admin-batch-hero__visual-overlay {
+    background: linear-gradient(to top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.2) 60%, transparent 100%);
+  }
+
+  .org-admin-batch-ops-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .org-admin-batch-hero__title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .org-admin-batch-participants-table th,
+  .org-admin-batch-participants-table td {
+    padding: 10px 12px;
+  }
+
+  .org-admin-batch-details-section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

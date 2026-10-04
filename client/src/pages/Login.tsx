@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import type {Role} from '../types';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const roleToDashboard: Record<Role, string> = {
   SuperAdmin: '/dashboard/super-admin',
@@ -100,6 +100,19 @@ export default function Login() {
           {error && <p className="alert alert-error">{error}</p>}
           <button type="submit" className="btn">Log In</button>
         </form>
+
+        <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color)', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.9rem' }}>
+          <div>
+            <span style={{ color: 'var(--text-muted)' }}>New participant? </span>
+            <Link to="/register">Register here</Link>
+          </div>
+          <div>
+            <Link to="/verify-certificate">Verify a Certificate</Link>
+          </div>
+          <div style={{ marginTop: '0.25rem' }}>
+            <Link to="/" style={{ color: 'var(--text-muted)' }}>← Back to Home</Link>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,814 @@
+/* ==========================================================================
+   TrailOps Participant - Trek Feedback Page Styles
+   Design System tokens: --primary, --primary-accent, --bg-body, --bg-surface, etc.
+   ========================================================================== */
+
+.participant-feedback-page {
+  min-height: 100vh;
+  background: var(--bg-body);
+}
+
+.participant-feedback-main {
+  width: 100%;
+  min-width: 0;
+}
+
+.participant-feedback-container {
+  display: flex;
+  width: min(100% - 3rem, 1280px);
+  flex-direction: column;
+  gap: 1.75rem;
+  margin: 0 auto;
+  padding: 2.25rem 0 4.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   1. Page Header Hierarchy
+   -------------------------------------------------------------------------- */
+.participant-feedback-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.participant-feedback-header-content {
+  flex: 1;
+  min-width: 260px;
+}
+
+.participant-feedback-eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.participant-feedback-title {
+  margin: 0 0 0.45rem;
+  color: var(--text-main);
+  font-size: clamp(1.8rem, 3vw, 2.35rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.participant-feedback-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  max-width: 680px;
+}
+
+/* --------------------------------------------------------------------------
+   2. KPI Summary Metrics Cards
+   -------------------------------------------------------------------------- */
+.participant-feedback-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.participant-feedback-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem 1.35rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.participant-feedback-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.participant-feedback-stat-icon {
+  display: grid;
+  place-items: center;
+  width: 2.85rem;
+  height: 2.85rem;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.participant-feedback-stat-icon--amber {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.participant-feedback-stat-icon--green {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.participant-feedback-stat-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.participant-feedback-stat-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.15;
+}
+
+.participant-feedback-stat-label {
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* --------------------------------------------------------------------------
+   3. Tab Controls
+   -------------------------------------------------------------------------- */
+.participant-feedback-tabs-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.participant-feedback-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none;
+}
+
+.participant-feedback-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.participant-feedback-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.participant-feedback-tab-btn:hover {
+  background: var(--bg-surface-alt);
+  color: var(--text-main);
+}
+
+.participant-feedback-tab-btn--active {
+  background: var(--primary-light);
+  border-color: #bbf7d0;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.participant-feedback-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.35rem;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.06);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.participant-feedback-tab-btn--active .participant-feedback-tab-badge {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   4. Feedback Cards Grid
+   -------------------------------------------------------------------------- */
+.participant-feedback-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.25rem;
+}
+
+.participant-feedback-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.participant-feedback-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-md);
+}
+
+/* Visual thumbnail row */
+.participant-feedback-card-visual {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  background: #0f172a;
+  overflow: hidden;
+}
+
+.participant-feedback-card-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.participant-feedback-card:hover .participant-feedback-card-thumb {
+  transform: scale(1.03);
+}
+
+.participant-feedback-card-thumb--placeholder {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Date Circle Badge */
+.participant-feedback-date-badge {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: var(--text-main);
+  z-index: 2;
+}
+
+.participant-feedback-date-badge-day {
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.participant-feedback-date-badge-month {
+  font-size: 0.62rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary-accent);
+}
+
+/* Status Pill in corner */
+.participant-feedback-status-pill {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.03em;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+}
+
+.participant-feedback-status-pill--completed {
+  background: rgba(240, 253, 244, 0.92);
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.participant-feedback-status-pill--reviewed {
+  background: rgba(238, 242, 255, 0.94);
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+}
+
+/* Card Body */
+.participant-feedback-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.25rem;
+  flex: 1;
+}
+
+.participant-feedback-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.participant-feedback-card-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 750;
+  color: var(--text-main);
+  line-height: 1.3;
+}
+
+.participant-feedback-card-location {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.participant-feedback-card-batch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface-alt);
+  width: fit-content;
+}
+
+.participant-feedback-card-dates {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.participant-feedback-card-footer {
+  margin-top: auto;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.participant-feedback-btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 650;
+  font-size: 0.85rem;
+  width: 100%;
+  justify-content: center;
+  padding: 0.65rem 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   5. Reviewed Card Specific Treatment
+   -------------------------------------------------------------------------- */
+.participant-feedback-review-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+}
+
+.participant-feedback-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.participant-feedback-overall-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full);
+  background: #fef3c7;
+  color: #92400e;
+  font-weight: 750;
+  font-size: 0.84rem;
+  border: 1px solid #fde68a;
+}
+
+.participant-feedback-overall-star {
+  color: #d97706;
+}
+
+.participant-feedback-ratings-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.participant-feedback-rating-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.18rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  font-size: 0.75rem;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.participant-feedback-rating-chip svg {
+  color: #d97706;
+}
+
+.participant-feedback-comment-quote {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  font-style: italic;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   6. Modal Dialog & Star Rating Widget
+   -------------------------------------------------------------------------- */
+.participant-feedback-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  overflow-y: auto;
+  animation: pfFadeIn 0.18s ease;
+}
+
+@keyframes pfFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.participant-feedback-modal {
+  position: relative;
+  width: min(100%, 540px);
+  max-height: calc(100vh - 3rem);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow-y: auto;
+  padding: 2rem;
+  animation: pfSlideUp 0.22s ease;
+}
+
+@keyframes pfSlideUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.participant-feedback-modal-close {
+  position: absolute;
+  top: 1.15rem;
+  right: 1.15rem;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-full);
+  border: 0;
+  background: var(--bg-surface-alt);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.participant-feedback-modal-close:hover {
+  background: #e2e8f0;
+  color: var(--text-main);
+}
+
+.participant-feedback-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.participant-feedback-modal-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.participant-feedback-modal-header-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  padding-right: 2rem;
+}
+
+.participant-feedback-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 750;
+  color: var(--text-main);
+}
+
+.participant-feedback-modal-subtitle {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+/* Star Rating Modules */
+.participant-feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.participant-feedback-rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-alt);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.participant-feedback-rating-label-group {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 140px;
+}
+
+.participant-feedback-rating-category-icon {
+  color: var(--primary-accent);
+  flex-shrink: 0;
+}
+
+.participant-feedback-rating-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.participant-feedback-star-control {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.participant-feedback-star-btn {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  color: #cbd5e1;
+  transition: transform 0.12s ease, color 0.12s ease;
+}
+
+.participant-feedback-star-btn:hover {
+  transform: scale(1.18);
+}
+
+.participant-feedback-star-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.participant-feedback-star-btn--filled {
+  color: #f59e0b;
+}
+
+.participant-feedback-rating-descriptor {
+  font-size: 0.76rem;
+  font-weight: 650;
+  color: #b45309;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* Textarea Comments */
+.participant-feedback-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.participant-feedback-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.participant-feedback-optional {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.participant-feedback-textarea {
+  width: 100%;
+  min-height: 5.5rem;
+  padding: 0.75rem 0.95rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.participant-feedback-textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
+}
+
+/* Modal Actions */
+.participant-feedback-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Feedback banners */
+.participant-feedback-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.86rem;
+  font-weight: 550;
+  margin-top: 0.5rem;
+}
+
+.participant-feedback-alert--success {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+}
+
+.participant-feedback-alert--error {
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--error-text);
+}
+
+/* --------------------------------------------------------------------------
+   7. Empty & Loading States
+   -------------------------------------------------------------------------- */
+.participant-feedback-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+.participant-feedback-state-icon {
+  color: var(--text-muted);
+  margin-bottom: 0.85rem;
+}
+
+.participant-feedback-state-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+  font-weight: 750;
+  color: var(--text-main);
+}
+
+.participant-feedback-state-desc {
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+  max-width: 480px;
+  line-height: 1.55;
+}
+
+.participant-spin {
+  animation: participantSpin 1s linear infinite;
+}
+
+@keyframes participantSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* --------------------------------------------------------------------------
+   8. Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .participant-feedback-container {
+    width: min(100% - 2rem, 1280px);
+    padding: 1.5rem 0 3rem;
+  }
+
+  .participant-feedback-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .participant-feedback-rating-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .participant-feedback-star-control {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .participant-feedback-container {
+    width: min(100% - 1.25rem, 1280px);
+    gap: 1.25rem;
+  }
+
+  .participant-feedback-modal {
+    padding: 1.25rem;
+  }
+
+  .participant-feedback-modal-actions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+
+  .participant-feedback-modal-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -15,12 +15,19 @@ const organizationMembershipSchema = new Schema(
     { timestamps: true }
 );
 
+// Ensures an organization has only one OrgAdmin membership
+// partialFilterExpression applies this uniqueness rule only to OrgAdmin records
 organizationMembershipSchema.index(
   { organizationId: 1, role: 1 },
   { unique: true, partialFilterExpression: { role: 'OrgAdmin' } }
 );
 
+// Makes it efficient to find all memberships belonging to a user
 organizationMembershipSchema.index({ userId: 1 });
+
+// Prevents the same user from having duplicate membership
+// in the same organization
+organizationMembershipSchema.index({ userId: 1, organizationId: 1 }, { unique: true });
 
 const OrganizationMembership = model('OrganizationMembership', organizationMembershipSchema);
 export default OrganizationMembership;

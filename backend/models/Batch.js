@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
 const batchSchema = new Schema(
-    {
+    { 
         organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
         tripId: { type: Schema.Types.ObjectId, ref: 'Trip', required: true },
         batchName: { type: String },
@@ -17,8 +17,12 @@ const batchSchema = new Schema(
             }
         },
         maxCapacity: { type: Number, min: 1, max: 500 },
-        status: { type: String, enum: ['Open', 'Full', 'Completed', 'Cancelled '], default: 'Open' }
-        
+        status: { type: String, enum: ['Open', 'Full', 'Completed', 'Cancelled '], default: 'Open' },
+        reservationLock: {
+            type: Number,
+            default: 0,
+            min: 0
+        }
     }
 );
 

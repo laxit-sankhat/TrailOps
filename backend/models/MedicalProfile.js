@@ -10,6 +10,9 @@ const medicalProfileSchema = new Schema(
         medications: { type: String },
         emergencyContactDetails: { type: String },
         reportFileUrl: { type: String },
+        reportPublicId: { type: String },
+        reportFileName: { type: String },
+        reportResourceType: { type: String },
         validUntil: { type: Date }
     },
     { timestamps: true }

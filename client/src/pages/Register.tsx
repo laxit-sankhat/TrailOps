@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { registerParticipant } from '../services/participantService';
 
 export default function Register() {
@@ -97,6 +97,16 @@ export default function Register() {
                         </p>
                     )}
                 </form>
+
+                <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color)', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.9rem' }}>
+                    <div>
+                        <span style={{ color: 'var(--text-muted)' }}>Already registered? </span>
+                        <Link to="/login">Sign in</Link>
+                    </div>
+                    <div style={{ marginTop: '0.25rem' }}>
+                        <Link to="/" style={{ color: 'var(--text-muted)' }}>← Back to Home</Link>
+                    </div>
+                </div>
             </div>
         </div>
     );

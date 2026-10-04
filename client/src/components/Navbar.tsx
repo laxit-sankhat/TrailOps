@@ -1,8 +1,15 @@
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
+import ParticipantNavbar from './participant/ParticipantNavbar';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const location = useLocation();
+
+  if (user?.role === 'Participant' || location.pathname.startsWith('/dashboard/participant')) {
+    return <ParticipantNavbar />;
+  }
 
   return (
     <nav className="navbar">
@@ -18,4 +25,4 @@ export default function Navbar() {
       </div>
     </nav>
   );
-}
+}

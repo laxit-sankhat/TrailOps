@@ -59,13 +59,17 @@ export const restrictToOwnOrg = (req, res, next) => {
         return next(); 
     }
 
-    const targetOrgId = req.params.organizationId || req.body.organizationId;
+    if (!req.user?.organizationId) {
+        return res.status(403).json({ success: false, message: 'No organization scope found for your account' });
+    }
+
+    const targetOrgId = req.params.organizationId || req.body.organizationId || req.query.organizationId;
 
     if (!targetOrgId) {
         return res.status(400).json({ success: false, message: 'organizationId is required' });
     }
 
-    if (targetOrgId !== req.user.organizationId) {
+    if (targetOrgId.toString() !== req.user.organizationId.toString()) {
         return res.status(403).json({ success: false, message: 'You cannot access another organization\'s data' });
     }
 
